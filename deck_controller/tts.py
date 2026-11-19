@@ -87,21 +87,36 @@ def _synth_robot_chirp(text: str) -> np.ndarray:
 
 
 def apply_robot_filter(pcm_i16: np.ndarray) -> np.ndarray:
-    """Apply a lightweight ring-modulator + short metallic comb delay for a cute robot voice."""
+    """Apply a warm, subtle companion-bot filter (slight pitch drop + chassis resonance, no warble)."""
     if len(pcm_i16) == 0:
         return pcm_i16
     x = pcm_i16.astype(np.float32) / 32768.0
-    t = np.arange(len(x), dtype=np.float32) / SAMPLE_RATE
-    # Gentle 95 Hz ring modulation blended with dry voice for intelligibility
-    mod = 0.65 + 0.35 * np.sin(2.0 * math.pi * 95.0 * t)
-    y = x * mod
-    # 7 ms metallic comb echo
-    delay = int(SAMPLE_RATE * 0.007)
-    if len(y) > delay:
-        y[delay:] = 0.78 * y[delay:] + 0.28 * y[:-delay]
+
+    # Gentle pitch warmth (~0.92x -> slightly deeper, less chipmunk/high-pitched)
+    if len(x) > 16:
+        new_len = int(round(len(x) / 0.92))
+        x_old = np.linspace(0.0, 1.0, len(x), endpoint=False)
+        x_new = np.linspace(0.0, 1.0, new_len, endpoint=False)
+        x = np.interp(x_new, x_old, x).astype(np.float32)
+
+    # Subtle small-chassis resonance (two clean short delays, no AM/ring-mod warble)
+    y = x.copy()
+    d1 = int(SAMPLE_RATE * 0.0042)
+    d2 = int(SAMPLE_RATE * 0.0068)
+    if len(y) > d2:
+        y[d1:] += 0.16 * x[:-d1]
+        y[d2:] += 0.10 * x[:-d2]
+
+    # Gentle low-pass smoothing to tame harsh sibilance
+    if len(y) > 4:
+        kernel = np.array([0.15, 0.35, 0.35, 0.15], dtype=np.float32)
+        y = np.convolve(y, kernel, mode="same")
+
+    # Soft tanh warmth + normalize
+    y = np.tanh(y * 1.15)
     peak = float(np.max(np.abs(y))) or 1.0
-    if peak > 0.95:
-        y *= 0.95 / peak
+    if peak > 0.92:
+        y *= 0.92 / peak
     return np.clip(y * 32767.0, -32768.0, 32767.0).astype(np.int16)
 
 
@@ -123,7 +138,7 @@ def synthesize_pcm(text: str, *, robot_voice: bool = True) -> tuple[np.ndarray, 
         espeak = shutil.which("espeak-ng") or shutil.which("espeak")
         if espeak:
             res = subprocess.run(
-                [espeak, "-s", "165", "-p", "60", "-w", str(wav_path), clean],
+                [espeak, "-s", "155", "-p", "42", "-w", str(wav_path), clean],
                 capture_output=True,
                 timeout=15,
             )
@@ -134,7 +149,7 @@ def synthesize_pcm(text: str, *, robot_voice: bool = True) -> tuple[np.ndarray, 
         if pcm is None and shutil.which("say"):
             aiff_path = Path(td) / "out.aiff"
             res = subprocess.run(
-                ["say", "-o", str(aiff_path), clean],
+                ["say", "-r", "175", "-o", str(aiff_path), clean],
                 capture_output=True,
                 timeout=15,
             )

@@ -157,7 +157,10 @@ class DeckControllerApp:
         if not self._audio_ok or self.audio_muted or self._audio_channel is None:
             return
         try:
-            snd = pygame.mixer.Sound(buffer=pcm_i16.tobytes())
+            init = pygame.mixer.get_init()
+            ch = init[2] if init else 1
+            buf = np.repeat(pcm_i16, ch) if ch > 1 else pcm_i16
+            snd = pygame.mixer.Sound(buffer=buf.tobytes())
             if self._audio_channel.get_busy():
                 self._audio_channel.queue(snd)
             else:
