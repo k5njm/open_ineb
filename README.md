@@ -17,6 +17,7 @@ Community reverse-engineering research and open-source companion tooling for the
 
 ## Documentation & Tools
 
+- [Hardware Reference](docs/hardware.md) — SoCs (Horizon X5 + A3), cameras & optics (`OV50H` 1/1.3" 155° f/2.8 main + `SC035HGS` stereo pair), MCUs, buses, and community teardown wish list.
 - [System & Protocol Architecture](docs/architecture.md) — Reverse-engineering findings covering BLE `ProtocolV0`, local HTTP endpoints (`192.168.7.1:8010` / `:8080`), UCP + Eclipse Zenoh (`zenoh-pico`), and OTA update architecture.
 - [Firmware & Hardware Architecture](docs/firmware_architecture.md) — Complete dual-SoC (`X5` + `A3`) and multi-MCU firmware breakdown from `V26.10.28.04`.
 - [X5 Linux OS, Services, AI Models & Hardware Buses](docs/x5_os_and_services.md) — On-robot daemons, Iceoryx2/FastDDS + cross-chip bus, USB-C gadget/SSH/ADB config, RL locomotion policies, and UART/I2C bus map.
