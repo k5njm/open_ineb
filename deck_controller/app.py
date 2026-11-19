@@ -37,6 +37,33 @@ SCREEN_W = 1280
 SCREEN_H = 800
 SPEED_MODES = [("CHILL", 0.55), ("NORMAL", 1.0), ("SPORT", 1.45)]
 
+# Client-side progressive obstacle slowdown & hard brake thresholds (Issue #1)
+OA_SLOW_START_MM = 1200  # Begin ramping forward speed down at 1.20 m
+OA_HARD_STOP_MM = 450    # Clamp forward vx to 0.0 below 0.45 m
+LINK_STALE_SEC = 1.0     # Auto-brake if no UCP packet received for >1.0 s
+
+
+def apply_obstacle_speed_governor(
+    vx: float,
+    obstacle_dis_mm: int,
+    *,
+    enabled: bool = True,
+) -> tuple[float, bool]:
+    """
+    Progressively ramp forward `vx` down as `obstacle_dis_mm` approaches
+    `OA_HARD_STOP_MM`, and hard-clamp forward `vx = 0` inside the stop zone.
+    Reverse (`vx <= 0`) is always permitted so the pilot can back away.
+    Returns `(governed_vx, braking_active)`.
+    """
+    if not enabled or vx <= 0.0 or obstacle_dis_mm <= 0:
+        return vx, False
+    if obstacle_dis_mm <= OA_HARD_STOP_MM:
+        return 0.0, True
+    if obstacle_dis_mm < OA_SLOW_START_MM:
+        ratio = (obstacle_dis_mm - OA_HARD_STOP_MM) / float(OA_SLOW_START_MM - OA_HARD_STOP_MM)
+        return vx * max(0.0, min(1.0, ratio)), True
+    return vx, False
+
 
 def _deadzone(val: float, dz: float = 0.10) -> float:
     if abs(val) < dz:
@@ -85,8 +112,12 @@ class DeckControllerApp:
         self._client: BeniDeckClient | None = None
         self._media: BeniMediaClient | None = None
 
-        # Runtime settings
-        self.speed_idx = 1
+        # Runtime settings (conservative CHILL speed & obstacle governor ON by default)
+        self.speed_idx = 0
+        self.oa_governor_enabled = True
+        self.estop_active = False
+        self.oa_braking = False
+        self.link_stale = False
         self.eis_enabled = True
         self.high_res_vt = True
         self.gyro_enabled = False
@@ -192,6 +223,20 @@ class DeckControllerApp:
 
     def _shutdown(self) -> None:
         if self._client is not None:
+            try:
+                # Flood explicit zero-velocity stop commands before closing UCP
+                for _ in range(3):
+                    self._client.send_drive(
+                        vx=0.0,
+                        vy=0.0,
+                        yaw_rate=0.0,
+                        gimbal_pitch=self.gimbal_pitch,
+                        height=self.height_norm,
+                        loco_profile=self.speed_idx,
+                        jump=False,
+                    )
+            except Exception:
+                pass
             self._client.close()
         if self._mock_srv is not None:
             self._mock_srv.close()
@@ -270,6 +315,7 @@ class DeckControllerApp:
     def _settings_entries(self) -> list[tuple[str, str]]:
         return [
             ("Speed Mode", SPEED_MODES[self.speed_idx][0]),
+            ("Obstacle Speed Governor", "ON" if self.oa_governor_enabled else "OFF"),
             ("EIS Stabilization", "ON" if self.eis_enabled else "OFF"),
             ("Video Stream Quality", "1080p" if self.high_res_vt else "720p"),
             ("Gyro Camera Tilt", "ON" if self.gyro_enabled else "OFF"),
@@ -288,34 +334,36 @@ class DeckControllerApp:
         if idx == 0:
             self.speed_idx = (self.speed_idx + 1) % len(SPEED_MODES)
         elif idx == 1:
+            self.oa_governor_enabled = not self.oa_governor_enabled
+        elif idx == 2:
             self.eis_enabled = not self.eis_enabled
             if self._client:
                 self._client.set_camera_settings(
                     eis_enable=self.eis_enabled, vt_index=1 if self.high_res_vt else 0
                 )
-        elif idx == 2:
+        elif idx == 3:
             self.high_res_vt = not self.high_res_vt
             if self._client:
                 self._client.set_camera_settings(
                     eis_enable=self.eis_enabled, vt_index=1 if self.high_res_vt else 0
                 )
-        elif idx == 3:
-            self.gyro_enabled = not self.gyro_enabled
         elif idx == 4:
-            self.invert_pitch = not self.invert_pitch
+            self.gyro_enabled = not self.gyro_enabled
         elif idx == 5:
-            self.robot_tts_voice = not self.robot_tts_voice
+            self.invert_pitch = not self.invert_pitch
         elif idx == 6:
+            self.robot_tts_voice = not self.robot_tts_voice
+        elif idx == 7:
             self.audio_muted = not self.audio_muted
             if self._client:
                 self._client.audio_muted = self.audio_muted
-        elif idx == 7:
-            self.show_hud = not self.show_hud
         elif idx == 8:
-            self._open_gallery()
+            self.show_hud = not self.show_hud
         elif idx == 9:
-            self._open_tts()
+            self._open_gallery()
         elif idx == 10:
+            self._open_tts()
+        elif idx == 11:
             return False
         return True
 
@@ -415,8 +463,17 @@ class DeckControllerApp:
         )
         screen.blit(self._font_md.render(info, True, (235, 242, 250)), (164, 15))
 
-        # Right status pills (REC / MUTE / GYRO)
+        # Right status pills (E-STOP / LINK STALE / OA BRAKE / REC / MUTE / GYRO)
         rx = w - 18
+        if self.estop_active or self.link_stale or self.oa_braking:
+            tag = "E-STOP" if self.estop_active else ("LINK STALE" if self.link_stale else "OA BRAKE")
+            col = (220, 38, 38) if (self.estop_active or self.link_stale) else (245, 158, 11)
+            s_lbl = self._font_sm.render(tag, True, (255, 255, 255))
+            sw = s_lbl.get_width() + 20
+            rx -= sw
+            pygame.draw.rect(screen, col, (rx, 11, sw, 32), border_radius=8)
+            screen.blit(s_lbl, (rx + 10, 18))
+            rx -= 10
         if self.recording or (t and t.recording):
             dur = t.rec_duration_s if t else 0
             rec_lbl = self._font_sm.render(f"REC {dur // 60:02d}:{dur % 60:02d}", True, (255, 255, 255))
@@ -628,7 +685,15 @@ class DeckControllerApp:
                             continue
 
                         # Main HUD shortcuts
-                        if ev.key in (pygame.K_TAB, pygame.K_ESCAPE):
+                        if ev.key == pygame.K_BACKSPACE:
+                            self.estop_active = not self.estop_active
+                            self.show_toast(
+                                "E-STOP ENGAGED (press Backspace to release)"
+                                if self.estop_active
+                                else "E-STOP released",
+                                duration=3.0,
+                            )
+                        elif ev.key in (pygame.K_TAB, pygame.K_ESCAPE):
                             self.overlay = "settings"
                         elif ev.key == pygame.K_t:
                             self._open_tts()
@@ -722,6 +787,22 @@ class DeckControllerApp:
                             self._open_gallery()
 
                 vx, vy, yaw, _ = self._sample_drive_inputs(dt)
+
+                # Safety governors: E-Stop, link-stale auto-brake, and progressive OA slowdown
+                if self._client is not None and self._client._bridge is not None:
+                    last_rx = float(self._client._bridge.ucp.get_stats().get("last_rx_ts", 0.0))
+                    self.link_stale = last_rx > 0.0 and (time.monotonic() - last_rx) > LINK_STALE_SEC
+                else:
+                    self.link_stale = False
+
+                if self.estop_active or self.link_stale:
+                    vx, vy, yaw, jump_triggered = 0.0, 0.0, 0.0, False
+                    self.oa_braking = False
+                else:
+                    obs_mm = self._client.telemetry.obstacle_dis_mm if self._client else 0
+                    vx, self.oa_braking = apply_obstacle_speed_governor(
+                        vx, obs_mm, enabled=self.oa_governor_enabled
+                    )
 
                 now = time.monotonic()
                 if self._client is not None and (now - last_ctrl_t >= 0.02 or jump_triggered):
