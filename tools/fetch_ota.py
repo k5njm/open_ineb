@@ -26,7 +26,7 @@ import sys
 from typing import Any
 
 import requests
-from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 
 DEFAULT_BASE_URL = "https://global-api.mondorobotics.com"
@@ -74,8 +74,16 @@ class MondoClient:
 
     @staticmethod
     def encrypt_password(password: str, pem_public_key: str) -> str:
+        # MondoApp uses PointyCastle's OAEPEncoding(RSAEngine()), which defaults to OAEP + MGF1(SHA-1) + SHA-1
         pub = serialization.load_pem_public_key(pem_public_key.encode("utf-8"))
-        ct = pub.encrypt(password.encode("utf-8"), padding.PKCS1v15())
+        ct = pub.encrypt(
+            password.encode("utf-8"),
+            padding.OAEP(
+                mgf=padding.MGF1(algorithm=hashes.SHA1()),
+                algorithm=hashes.SHA1(),
+                label=None,
+            ),
+        )
         return base64.b64encode(ct).decode("ascii")
 
     def login(self, account: str, password: str, region: str = "US", scene: str = "login") -> dict[str, Any]:
