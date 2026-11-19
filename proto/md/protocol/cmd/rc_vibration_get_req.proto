@@ -1,0 +1,8 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message RcVibrationGetReqData {
+  uint32 receiver_type = 1;
+  uint32 receiver_index = 2;
+}

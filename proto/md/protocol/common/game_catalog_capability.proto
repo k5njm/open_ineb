@@ -1,0 +1,11 @@
+syntax = "proto3";
+package md.protocol.common;
+import "md/protocol/common/game_support.proto";
+
+message GameCatalogCapability {
+  uint32 version = 1;
+  uint32 catalog_hash = 2;
+  uint32 menu_version = 3;
+  uint32 max_announced = 4;
+  repeated md.protocol.common.GameSupport games = 5;
+}

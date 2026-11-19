@@ -1,0 +1,37 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message PlannerSmplMotionData {
+  uint32 schema_version = 1;
+  uint32 flags = 2;
+  uint32 representation = 3;
+  uint32 coordinate_frame = 4;
+  uint32 inference_backend = 5;
+  uint32 frame_count = 6;
+  uint64 producer_instance_id = 7;
+  uint64 engagement_id = 8;
+  uint64 planner_epoch_id = 9;
+  uint64 handover_id = 10;
+  uint64 session_id = 11;
+  uint64 sequence = 12;
+  sint64 first_frame_index = 13;
+  bytes model_artifact_id = 14;
+  bytes motion_contract_id = 15;
+  uint64 input_watermark_mono_ns = 16;
+  uint64 publish_mono_ns = 17;
+  uint64 trajectory_start_mono_ns = 18;
+  uint32 frame_period_us = 19;
+  uint32 lease_duration_us = 20;
+  bytes smpl_model_hash = 21;
+  bytes wrist_order_hash = 22;
+  uint32 pose_joint_count = 23;
+  uint32 fk_joint_count = 24;
+  uint32 wrist_dof_count = 25;
+  uint32 valid_fields = 26;
+  repeated float root_position_m = 27;
+  repeated float root_quat_wxyz = 28;
+  repeated float local_axis_angle_rad = 29;
+  repeated float fk_world_position_m = 30;
+  repeated float wrist_joint_pos_rad = 31;
+}

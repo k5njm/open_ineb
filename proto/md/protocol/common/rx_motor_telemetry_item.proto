@@ -1,0 +1,22 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message RxMotorTelemetryItem {
+  uint32 motor_id = 1;
+  uint32 control_valid = 2;
+  uint32 extras_valid = 3;
+  uint32 control_age_ms = 4;
+  uint32 extras_age_ms = 5;
+  uint32 feedback_age_ms = 6;
+  float angle = 7;
+  float vel = 8;
+  float real_tor = 9;
+  float ref_tor = 10;
+  sint32 motor_temp = 11;
+  sint32 board_temp = 12;
+  uint32 bus_voltage = 13;
+  sint32 bus_cur_raw = 14;
+  sint32 uq_raw = 15;
+  sint32 ud_raw = 16;
+  sint32 id_raw = 17;
+}

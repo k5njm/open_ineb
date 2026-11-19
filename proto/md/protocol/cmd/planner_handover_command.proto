@@ -1,0 +1,25 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message PlannerHandoverCommandData {
+  uint32 schema_version = 1;
+  uint32 operation = 2;
+  uint32 target_representation = 3;
+  uint32 target_execution_kind = 4;
+  uint32 target_inference_backend = 5;
+  uint64 handover_id = 6;
+  uint64 engagement_id = 7;
+  uint64 active_planner_epoch_id = 8;
+  uint64 expected_authority_generation = 9;
+  uint64 candidate_producer_instance_id = 10;
+  uint64 candidate_planner_epoch_id = 11;
+  uint64 candidate_session_id = 12;
+  uint64 command_mono_ns = 13;
+  uint64 commit_not_before_mono_ns = 14;
+  bytes target_model_artifact_id = 15;
+  bytes target_plugin_config_hash = 16;
+  bytes target_motion_contract_id = 17;
+  bytes target_decoder_contract_id = 18;
+  bytes command_digest = 19;
+}

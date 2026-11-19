@@ -1,0 +1,9 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message RcJoystickUwbData {
+  uint64 joystick = 1;
+  uint32 endpoint_id = 2;
+  uint32 join_seq = 3;
+}

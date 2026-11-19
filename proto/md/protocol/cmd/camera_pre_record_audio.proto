@@ -1,0 +1,9 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message CameraPreRecordAudioData {
+  uint32 active = 2;
+  bytes session_id = 3;
+  uint64 issued_at_wall_ms = 4;
+}

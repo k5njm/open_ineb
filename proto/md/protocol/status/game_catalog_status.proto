@@ -1,0 +1,8 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+import "md/protocol/common/game_catalog_capability.proto";
+
+message GameCatalogStatusData {
+  md.protocol.common.GameCatalogCapability catalog = 1;
+}

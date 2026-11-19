@@ -1,0 +1,20 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message LocalMappingSilMapData {
+  uint64 map_generation = 1;
+  uint64 window_revision = 2;
+  uint64 source_task_seq = 3;
+  uint64 source_timestamp_ns = 4;
+  repeated sint32 window_origin_block_xy = 5;
+  float cell_resolution_m = 6;
+  float truncation_distance_m = 7;
+  float max_tsdf_weight = 8;
+  uint64 active_block_mask = 9;
+  uint64 selected_block_mask = 10;
+  uint32 active_block_count = 11;
+  uint32 observed_cell_count = 12;
+  repeated sint32 tsdf_q15 = 13;
+  bytes weight_q8 = 14;
+}

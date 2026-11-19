@@ -1,0 +1,23 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message AudioRhythmData {
+  uint32 session_id = 1;
+  uint32 generation = 2;
+  uint64 timestamp_ns = 3;
+  uint64 beat_origin_ns = 4;
+  uint64 period_ns = 5;
+  float bpm = 6;
+  float confidence = 7;
+  float energy = 8;
+  uint32 locked = 9;
+  uint64 music_timestamp_ns = 10;
+  float music_score = 11;
+  uint32 music_state = 12;
+  uint32 model_ready = 13;
+  uint32 motion_beat_divisor = 14;
+  uint32 energy_version = 15;
+  float relative_energy = 16;
+  uint32 energy_flags = 17;
+}

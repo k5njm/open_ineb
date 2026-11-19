@@ -1,0 +1,7 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message RcVibStep {
+  uint32 intensity = 1;
+  uint32 duration_ms = 2;
+}

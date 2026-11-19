@@ -1,0 +1,11 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message TestResultData {
+  uint32 test_type = 1;
+  uint32 result = 2;
+  bytes reserved = 3;
+  uint64 timestamp_ms = 4;
+  bytes session_id = 5;
+}

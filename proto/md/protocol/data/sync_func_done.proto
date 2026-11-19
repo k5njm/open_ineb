@@ -1,0 +1,8 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message SyncFuncDoneData {
+  uint64 frame_id = 1;
+  uint64 timestamp_ns = 2;
+}

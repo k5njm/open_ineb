@@ -1,0 +1,22 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message ProcessPerfMetrics {
+  uint32 process_status = 1;
+  uint32 pid = 2;
+  bytes process_name = 3;
+  bytes cmdline_args = 4;
+  float cpu_usage_percent = 5;
+  uint32 cpu_affinity_mask = 6;
+  sint32 priority = 7;
+  sint32 nice = 8;
+  uint64 memory_rss_kb = 9;
+  uint32 thread_count = 10;
+  uint32 voluntary_ctxt_switches = 11;
+  uint32 nonvoluntary_ctxt_switches = 12;
+  uint64 io_read_kbps = 13;
+  uint64 io_write_kbps = 14;
+  uint32 io_read_iops = 15;
+  uint32 io_write_iops = 16;
+  uint32 fd_count = 17;
+}

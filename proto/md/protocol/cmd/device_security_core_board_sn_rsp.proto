@@ -1,0 +1,8 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message DeviceSecurityCoreBoardSnRspData {
+  uint32 ret_code = 1;
+  bytes core_board_sn = 2;
+}

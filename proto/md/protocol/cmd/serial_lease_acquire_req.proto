@@ -1,0 +1,10 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message SerialLeaseAcquireReqData {
+  bytes port_path = 1;
+  uint32 timeout_ms = 2;
+  bytes requester_id = 3;
+  uint32 correlation_id = 4;
+}

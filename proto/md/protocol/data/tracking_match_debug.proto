@@ -1,0 +1,32 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+import "md/protocol/common/match_pair.proto";
+import "md/protocol/common/track_gallery_state.proto";
+
+message TrackingMatchDebugData {
+  uint64 frame_timestamp_ns = 1;
+  uint32 num_detections = 2;
+  uint32 num_active_tracks = 3;
+  uint32 num_matched = 4;
+  uint32 num_unmatched_dets = 5;
+  uint32 num_unmatched_tracks = 6;
+  uint32 iou_gate_rejects = 7;
+  uint32 dist3d_gate_rejects = 8;
+  uint32 _pad_outer = 9;
+  repeated float cost_matrix = 10;
+  repeated float iou_distances = 11;
+  repeated float cosine_distances = 12;
+  repeated float dist_3d = 13;
+  repeated md.protocol.common.MatchPair matches = 14;
+  bytes unmatched_det_indices = 15;
+  bytes unmatched_track_indices = 16;
+  repeated md.protocol.common.TrackGalleryState track_states = 17;
+  float config_iou_threshold = 18;
+  float config_max_cosine_distance = 19;
+  float config_max_3d_distance = 20;
+  float config_iou_weight = 21;
+  float config_feature_weight = 22;
+  uint32 occlusion_state = 23;
+  bytes _pad_tail = 24;
+}

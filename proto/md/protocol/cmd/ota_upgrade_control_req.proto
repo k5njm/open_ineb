@@ -1,0 +1,12 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+import "md/protocol/common/ota_upgrade_task_context.proto";
+
+message OtaUpgradeControlReqData {
+  uint32 control_cmd = 1;
+  uint32 version_field1 = 2;
+  uint32 version_field2 = 3;
+  uint32 reserved = 4;
+  md.protocol.common.OtaUpgradeTaskContext task = 5;
+}

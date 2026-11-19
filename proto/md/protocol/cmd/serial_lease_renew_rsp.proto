@@ -1,0 +1,9 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message SerialLeaseRenewRspData {
+  uint32 result = 1;
+  uint32 lease_token = 2;
+  uint32 correlation_id = 3;
+}

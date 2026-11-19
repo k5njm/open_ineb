@@ -1,0 +1,27 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message PlannerInferenceStatusData {
+  uint32 schema_version = 1;
+  uint32 state = 2;
+  uint32 inference_backend = 3;
+  uint32 execution_provider = 4;
+  uint32 scheduling_priority = 5;
+  uint32 last_result_code = 6;
+  uint64 producer_instance_id = 7;
+  uint64 engagement_id = 8;
+  uint64 planner_epoch_id = 9;
+  uint64 handover_id = 10;
+  uint64 status_sequence = 11;
+  uint64 status_mono_ns = 12;
+  uint64 last_request_id = 13;
+  bytes model_artifact_id = 14;
+  uint32 queue_depth = 15;
+  uint32 in_flight_requests = 16;
+  uint32 last_queue_wait_us = 17;
+  uint32 last_inference_us = 18;
+  uint32 consecutive_deadline_misses = 19;
+  uint64 host_memory_reserved_bytes = 20;
+  uint64 device_memory_reserved_bytes = 21;
+}

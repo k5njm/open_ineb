@@ -1,0 +1,22 @@
+syntax = "proto3";
+package md.protocol.common;
+import "md/protocol/common/cpu_core_stats.proto";
+
+message SystemPerfMetrics {
+  float cpu_usage_percent = 1;
+  float load_avg_1min = 2;
+  float load_avg_5min = 3;
+  float load_avg_15min = 4;
+  uint64 mem_total_kb = 5;
+  uint64 mem_available_kb = 6;
+  uint64 mem_free_kb = 7;
+  uint64 irq_total_count = 8;
+  uint64 softirq_total_count = 9;
+  uint64 ddr_bandwidth_mbps = 10;
+  uint32 bpu_usage_percent = 11;
+  float temp_cpu_celsius = 12;
+  float temp_bpu_celsius = 13;
+  float temp_ddr_celsius = 14;
+  repeated md.protocol.common.CpuCoreStats per_core_stats = 15;
+  uint32 num_cores = 16;
+}

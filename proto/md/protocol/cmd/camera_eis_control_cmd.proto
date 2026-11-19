@@ -1,0 +1,8 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message CameraEisControlCmdData {
+  uint32 eis_enable = 1;
+  uint32 eis_level = 2;
+}

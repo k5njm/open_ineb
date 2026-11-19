@@ -1,0 +1,24 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message HeadGripperCommandData {
+  uint32 schema_version = 1;
+  uint32 source = 2;
+  uint32 head_frame = 3;
+  uint32 source_clock_domain = 4;
+  uint64 producer_instance_id = 5;
+  uint64 engagement_id = 6;
+  uint64 aux_authority_id = 7;
+  uint64 aux_session_id = 8;
+  uint64 sequence = 9;
+  uint64 source_timestamp_ns = 10;
+  uint64 capture_mono_ns = 11;
+  uint32 lease_duration_us = 12;
+  uint32 head_valid_mask = 13;
+  uint32 gripper_valid_mask = 14;
+  uint32 gripper_mode = 15;
+  uint32 flags = 16;
+  repeated float head_target_rad = 17;
+  repeated float gripper_position = 18;
+}

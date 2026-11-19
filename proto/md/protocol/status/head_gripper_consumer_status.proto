@@ -1,0 +1,20 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message HeadGripperConsumerStatusData {
+  uint32 schema_version = 1;
+  uint32 state = 2;
+  uint32 source = 3;
+  uint64 controller_instance_id = 4;
+  uint64 producer_instance_id = 5;
+  uint64 engagement_id = 6;
+  uint64 aux_authority_id = 7;
+  uint64 aux_session_id = 8;
+  uint64 status_sequence = 9;
+  uint64 status_mono_ns = 10;
+  uint64 accepted_sequence = 11;
+  uint32 reference_age_us = 12;
+  uint32 reject_reason = 13;
+  uint32 flags = 14;
+}

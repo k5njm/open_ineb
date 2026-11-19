@@ -1,0 +1,17 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+import "md/protocol/common/telemetry_kv_pair.proto";
+
+message TelemetryEventData {
+  bytes event_id = 1;
+  bytes event_type = 2;
+  bytes source = 3;
+  bytes category = 4;
+  bytes message = 5;
+  uint32 severity = 6;
+  uint32 trigger_log_upload = 7;
+  bytes reserved = 8;
+  uint32 payload_count = 9;
+  repeated md.protocol.common.TelemetryKvPair payload = 10;
+}

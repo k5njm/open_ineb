@@ -1,0 +1,20 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message RxControlBatteryTelemetryData {
+  uint64 publish_monotonic_ns = 1;
+  uint64 received_monotonic_ns = 2;
+  uint32 valid = 3;
+  uint32 age_ms = 4;
+  uint32 soc = 5;
+  uint32 soh = 6;
+  sint32 current_cc2_ma = 7;
+  uint32 cell_total_mv = 8;
+  uint32 pack_mv = 9;
+  uint32 charger_mv = 10;
+  repeated uint32 cell_mv = 11;
+  repeated sint32 temp_raw = 12;
+  uint32 software_version = 13;
+  uint32 hardware_version = 14;
+}

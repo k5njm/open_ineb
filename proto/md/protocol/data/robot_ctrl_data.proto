@@ -1,0 +1,21 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message RobotCtrlDataData {
+  uint32 robot_state = 1;
+  uint32 ctrl_mode = 2;
+  float velocity_x = 3;
+  float velocity_y = 4;
+  float roll_angle = 5;
+  float pitch_angle = 6;
+  float yaw_speed = 7;
+  float gimbal_angle = 8;
+  float height = 9;
+  float jump_dis = 10;
+  float jump_height = 11;
+  uint32 jump_flag = 12;
+  uint32 flip_flag = 13;
+  uint32 nav_flag = 14;
+  uint32 switch_net = 15;
+}

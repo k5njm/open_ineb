@@ -1,0 +1,7 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message GameSupport {
+  uint32 game_id = 1;
+  uint32 flags = 2;
+}

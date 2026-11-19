@@ -1,0 +1,37 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message LogVaeDataData {
+  uint32 frame_id = 1;
+  uint64 timestamp_ns = 2;
+  uint64 depth_received_ts = 3;
+  uint64 process_done_ns = 4;
+  uint32 encoder_type = 6;
+  uint32 process_status = 7;
+  uint32 inference_executed = 8;
+  uint32 source_stream_id = 9;
+  uint64 source_seq = 10;
+  uint32 preprocess_profile = 11;
+  uint32 depth_encoding = 12;
+  float normalization_scale_m = 13;
+  uint32 image_width = 14;
+  uint32 image_height = 15;
+  float camera_fx = 16;
+  float camera_fy = 17;
+  float camera_cx = 18;
+  float camera_cy = 19;
+  uint64 processor_wall_time_ns = 24;
+  uint64 processor_thread_time_ns = 25;
+  uint64 preprocess_wall_time_ns = 26;
+  uint64 preprocess_thread_time_ns = 27;
+  uint64 inference_wall_time_ns = 28;
+  uint64 inference_thread_time_ns = 29;
+  uint64 output_wall_time_ns = 30;
+  uint64 output_thread_time_ns = 31;
+  uint32 moe_gate_enabled = 32;
+  uint64 gate_encoder_wall_time_ns = 33;
+  uint64 gate_encoder_thread_time_ns = 34;
+  uint64 task_seq = 35;
+  uint32 profile_valid = 36;
+}

@@ -1,0 +1,24 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message PlannerConsumerStatusData {
+  uint32 schema_version = 1;
+  uint32 state = 2;
+  uint32 representation = 3;
+  uint64 controller_instance_id = 4;
+  uint64 producer_instance_id = 5;
+  uint64 engagement_id = 6;
+  uint64 planner_epoch_id = 7;
+  uint64 handover_id = 8;
+  uint64 session_id = 9;
+  uint64 status_sequence = 10;
+  uint64 status_mono_ns = 11;
+  bytes accepted_motion_contract_id = 12;
+  uint64 accepted_sequence = 13;
+  sint64 consumed_frame_index = 14;
+  uint32 reference_age_us = 15;
+  uint32 ack_lag_frames = 16;
+  uint32 reject_reason = 17;
+  uint32 flags = 18;
+}

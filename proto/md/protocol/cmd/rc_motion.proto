@@ -1,0 +1,13 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message RcMotionData {
+  sint32 euler_yaw = 1;
+  sint32 euler_pitch = 2;
+  sint32 euler_roll = 3;
+  uint32 jump_mode = 4;
+  uint32 dev_id = 5;
+  uint32 key_pressed = 6;
+  bytes reserved = 7;
+}

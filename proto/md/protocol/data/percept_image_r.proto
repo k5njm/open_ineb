@@ -1,0 +1,10 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+import "md/protocol/common/image_data.proto";
+import "md/protocol/common/camera_frame_attr.proto";
+
+message PerceptImageRData {
+  md.protocol.common.ImageData data = 1;
+  md.protocol.common.CameraFrameAttr attr = 2;
+}

@@ -1,0 +1,35 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message PlannerStatusData {
+  uint32 schema_version = 1;
+  uint32 state = 2;
+  uint32 representation = 3;
+  uint32 execution_kind = 4;
+  uint32 inference_backend = 5;
+  uint32 flags = 6;
+  uint32 planner_id_length = 7;
+  uint64 producer_instance_id = 8;
+  uint64 engagement_id = 9;
+  uint64 planner_epoch_id = 10;
+  uint64 handover_id = 11;
+  uint64 session_id = 12;
+  uint64 status_sequence = 13;
+  uint64 status_mono_ns = 14;
+  uint64 input_owner_instance_id = 15;
+  uint64 last_cycle_sequence = 16;
+  uint64 last_output_sequence = 17;
+  sint64 last_output_first_frame_index = 18;
+  bytes planner_id = 19;
+  bytes model_artifact_id = 20;
+  bytes plugin_config_hash = 21;
+  bytes motion_contract_id = 22;
+  bytes decoder_contract_id = 23;
+  uint32 valid_inputs = 24;
+  uint32 stale_inputs = 25;
+  uint32 last_output_age_us = 26;
+  uint32 last_cycle_latency_us = 27;
+  uint32 consecutive_deadline_misses = 28;
+  uint32 last_result_code = 29;
+}

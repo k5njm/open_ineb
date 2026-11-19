@@ -1,0 +1,14 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message SimMotorCmdData {
+  repeated float torque = 1;
+  repeated float position = 2;
+  repeated float velocity = 3;
+  repeated float kp = 4;
+  repeated float kd = 5;
+  uint32 enable_mask = 6;
+  bytes _pad = 7;
+  uint64 timestamp_ns = 8;
+}

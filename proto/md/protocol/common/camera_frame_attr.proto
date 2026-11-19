@@ -1,0 +1,7 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message CameraFrameAttr {
+  uint32 seq = 1;
+  uint64 pts = 2;
+}

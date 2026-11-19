@@ -1,0 +1,19 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message RxDebugTestResultData {
+  bytes test_id = 1;
+  uint64 sortie_id = 2;
+  uint32 ui_seq_echo = 3;
+  uint32 pass = 4;
+  uint32 abort_reason = 5;
+  uint32 metric_count = 6;
+  bytes metric_name = 7;
+  repeated double metric_value = 8;
+  uint32 fail_reason_count = 9;
+  bytes fail_reasons = 10;
+  uint64 t_start_mono_ns = 11;
+  uint64 t_end_mono_ns = 12;
+  uint64 timestamp_ns = 13;
+}

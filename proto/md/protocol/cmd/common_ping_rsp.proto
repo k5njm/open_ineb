@@ -1,0 +1,8 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message CommonPingRspData {
+  uint32 ret_code = 1;
+  bytes ping_data = 2;
+}

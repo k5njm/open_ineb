@@ -1,0 +1,20 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message PncJointData {
+  uint32 state = 1;
+  float position = 2;
+  float velocity = 3;
+  float torque = 4;
+  float position_tar = 5;
+  float velocity_tar = 6;
+  float torque_tar = 7;
+  sint32 board_temp = 8;
+  sint32 motor_temp = 9;
+  float bus_voltage = 10;
+  float bus_cur = 11;
+  sint32 uq = 12;
+  sint32 ud = 13;
+  sint32 id = 14;
+  uint32 err_code = 15;
+}

@@ -1,0 +1,10 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message MotionPlayCmdData {
+  uint32 motion_id = 1;
+  uint32 action = 2;
+  uint32 trigger_id = 3;
+  float trigger_distance_cm = 4;
+}

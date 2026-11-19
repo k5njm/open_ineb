@@ -1,0 +1,14 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message RealRlRuntimeControlData {
+  uint32 version = 1;
+  uint32 operation = 2;
+  uint32 inference_mode = 3;
+  uint32 rollout_recording_requested = 4;
+  uint64 controller_instance_id = 5;
+  uint64 generation = 6;
+  uint64 target_runtime_instance_id = 7;
+  float exploration_scale = 8;
+}

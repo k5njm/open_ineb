@@ -1,0 +1,35 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message PlannerSelectedIntentData {
+  uint32 schema_version = 1;
+  uint32 intent_valid = 2;
+  uint32 planner_role = 3;
+  uint64 producer_instance_id = 4;
+  uint64 engagement_id = 5;
+  uint64 planner_epoch_id = 6;
+  uint64 handover_id = 7;
+  uint64 session_id = 8;
+  uint64 cycle_sequence = 9;
+  uint64 cycle_start_mono_ns = 10;
+  uint32 planner_id_length = 11;
+  bytes planner_id = 12;
+  uint32 source = 13;
+  uint32 kind = 14;
+  uint32 valid_fields = 15;
+  uint64 source_instance_id = 16;
+  uint64 intent_sequence = 17;
+  uint64 receive_mono_ns = 18;
+  uint32 lease_duration_us = 19;
+  uint32 linear_frame = 20;
+  uint32 yaw_mode = 21;
+  uint32 action_id = 22;
+  repeated float linear_velocity_mps = 23;
+  float yaw_rate_rad_s = 24;
+  float yaw_target_rad = 25;
+  float body_height_m = 26;
+  float body_pitch_rad = 27;
+  float body_roll_rad = 28;
+  repeated float action_params = 29;
+}

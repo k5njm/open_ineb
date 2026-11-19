@@ -1,0 +1,19 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message RxSimStateData {
+  repeated float position = 1;
+  repeated float velocity = 2;
+  repeated float torque = 3;
+  repeated float ref_torque = 4;
+  uint32 online_mask = 5;
+  repeated float imu_gyro = 6;
+  repeated float imu_accel = 7;
+  repeated float body_quat = 8;
+  uint32 motor_error_flags = 9;
+  uint32 mcu_error_flags = 10;
+  uint32 mcu_state = 11;
+  bytes _pad = 12;
+  uint64 timestamp_ns = 13;
+}

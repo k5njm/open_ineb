@@ -1,0 +1,23 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message GestureCandidatesData {
+  uint64 detection_timestamp_ns = 1;
+  uint32 state = 2;
+  uint32 candidate_count = 3;
+  uint32 target_type = 4;
+  uint32 reserved = 5;
+  bytes tracking_ids = 6;
+  bytes motion_valid = 7;
+  bytes event_valid = 8;
+  bytes observation_states = 9;
+  bytes episode_states = 10;
+  repeated uint32 raw_motion_ids = 11;
+  repeated uint32 stable_motion_ids = 12;
+  repeated float confidences = 13;
+  repeated float normalized_bboxes_xywh = 14;
+  repeated uint32 event_seqs = 15;
+  repeated uint32 session_seqs = 16;
+  repeated uint64 producer_instance_ids = 17;
+}

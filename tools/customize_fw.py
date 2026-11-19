@@ -502,23 +502,42 @@ def repack_firmware(cfg: CustomizationConfig) -> None:
         )
 
 
-def upload_local_ota(zip_path: pathlib.Path, robot_ip: str = "192.168.7.1", port: int = 8080) -> None:
-    upgrade_id = str(uuid.uuid4())
+def upload_local_ota(
+    zip_path: pathlib.Path,
+    robot_ip: str = "192.168.7.1",
+    port: int = 8080,
+    upgrade_id: str | None = None,
+    grant_token: str | None = None,
+    chunk_size: int = 4 * 1024 * 1024,
+) -> None:
+    upgrade_id = upgrade_id or str(uuid.uuid4())
     url = f"http://{robot_ip}:{port}/v2/upgrades/{upgrade_id}/upload"
-    console.print(f"[blue]Uploading {zip_path.name} ({zip_path.stat().st_size:,} bytes) to {url}...[/blue]")
+    total_size = zip_path.stat().st_size
+    headers: dict[str, str] = {"Content-Type": "application/octet-stream"}
+    if grant_token:
+        headers["Authorization"] = f"Bearer {grant_token}"
+    console.print(f"[blue]Uploading {zip_path.name} ({total_size:,} bytes) to {url}...[/blue]")
+    offset = 0
     with zip_path.open("rb") as f:
-        resp = requests.post(
-            url,
-            files={"file": (zip_path.name, f, "application/zip")},
-            timeout=600,
-        )
-    console.print(f"[cyan]HTTP {resp.status_code}:[/cyan] {resp.text}")
-    resp.raise_for_status()
+        while offset < total_size:
+            chunk = f.read(chunk_size)
+            end = offset + len(chunk) - 1
+            req_headers = dict(headers)
+            req_headers["Content-Range"] = f"bytes {offset}-{end}/{total_size}"
+            resp = requests.post(url, data=chunk, headers=req_headers, timeout=120)
+            if resp.status_code >= 400:
+                console.print(f"[red]HTTP {resp.status_code} at offset {offset}:[/red] {resp.text}")
+                resp.raise_for_status()
+            offset += len(chunk)
+            pct = (offset / total_size) * 100
+            print(f"\rUploaded {offset:,}/{total_size:,} bytes ({pct:.1f}%)", end="", file=sys.stderr)
+    print("", file=sys.stderr)
     console.print(
         Panel.fit(
             f"[bold green]Upload complete (upgrade_id={upgrade_id})[/bold green]\n"
+            f"Final response: {resp.text}\n"
             "Next step: trigger installation by sending `/cmd/ota/upgrade_control_req` "
-            "over Zenoh-over-UCP (see docs/ota_api.md).",
+            "over Zenoh-over-UCP (see tools/ota_proto.py and docs/ota_api.md).",
             border_style="green",
         )
     )
@@ -538,11 +557,18 @@ def main() -> int:
     parser.add_argument("--adb-pubkey-file", type=pathlib.Path, help="Optional adbkey.pub file")
     parser.add_argument("--upload", action="store_true", help="Upload built OTA ZIP to Beni over local Wi-Fi")
     parser.add_argument("--upload-only", type=pathlib.Path, help="Upload an existing OTA ZIP without rebuilding")
+    parser.add_argument("--upgrade-id", default=None, help="Upgrade UUID (from OtaUpgradeControlRsp)")
+    parser.add_argument("--grant-token", default=None, help="Bearer upload_grant_token (from OtaUpgradeControlRsp)")
     parser.add_argument("--robot-ip", default="192.168.7.1", help="Beni IP address (default: 192.168.7.1)")
     args = parser.parse_args()
 
     if args.upload_only:
-        upload_local_ota(args.upload_only.expanduser().resolve(), robot_ip=args.robot_ip)
+        upload_local_ota(
+            args.upload_only.expanduser().resolve(),
+            robot_ip=args.robot_ip,
+            upgrade_id=args.upgrade_id,
+            grant_token=args.grant_token,
+        )
         return 0
 
     if args.non_interactive:

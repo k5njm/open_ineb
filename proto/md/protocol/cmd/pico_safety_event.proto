@@ -1,0 +1,14 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message PicoSafetyEventData {
+  uint32 schema_version = 1;
+  uint32 command = 2;
+  uint32 flags = 3;
+  uint64 source_instance_id = 4;
+  uint64 sequence = 5;
+  uint64 capture_mono_ns = 6;
+  uint32 observed_hold_ms = 7;
+  uint32 authorization_profile_id = 8;
+}

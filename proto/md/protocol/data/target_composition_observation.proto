@@ -1,0 +1,14 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message TargetCompositionObservationData {
+  uint64 observation_timestamp_ns = 1;
+  uint32 target_generation = 2;
+  uint32 tracking_id = 3;
+  uint32 valid = 4;
+  repeated float center_xy = 5;
+  repeated float screen_to_horizontal_ray = 6;
+  float reference_yaw_rad = 7;
+  uint64 publication_timestamp_ns = 8;
+}

@@ -1,0 +1,12 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message RxControlLcmCmdData {
+  uint64 timestamp_ns = 1;
+  uint64 time_us = 2;
+  bytes cmd = 3;
+  uint32 mcu_id = 4;
+  float value1 = 5;
+  float value2 = 6;
+}

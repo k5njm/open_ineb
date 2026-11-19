@@ -1,0 +1,33 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message CameraStatusData {
+  uint32 rec_state = 1;
+  uint32 cur_rec_width = 2;
+  uint32 cur_rec_height = 3;
+  uint32 cur_rec_bitrate = 4;
+  uint32 cur_snap_width = 5;
+  uint32 cur_snap_height = 6;
+  uint32 camera_width = 7;
+  uint32 camera_height = 8;
+  uint32 rec_frame_rate = 9;
+  uint32 vt_width = 10;
+  uint32 vt_height = 11;
+  uint32 vt_frame_rate = 12;
+  uint32 vt_bitrate = 13;
+  uint32 eis_status = 14;
+  uint32 pro_shutter_idx = 15;
+  uint32 pro_iso_idx = 16;
+  uint32 pro_ev_idx = 17;
+  uint32 pro_wb_idx = 18;
+  uint32 rec_duration_s = 19;
+  uint32 zoom_data = 20;
+  uint32 current_mode = 21;
+  uint32 current_preset = 22;
+  uint32 cur_lux = 23;
+  uint32 lux_level = 24;
+  uint32 current_profile_id = 25;
+  uint32 recording_state = 26;
+  uint32 record_response_version = 27;
+}

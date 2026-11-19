@@ -1,0 +1,24 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message RxControlPerfData {
+  uint64 timestamp_ns = 1;
+  uint64 tick = 2;
+  uint32 fsm_state = 3;
+  uint64 mcu_ts_us = 4;
+  uint32 recv_to_t0_ns = 5;
+  uint32 t0_fb_ns = 6;
+  uint32 t1_obs_ns = 7;
+  uint32 t2_infer_ns = 8;
+  uint32 t3_action_ns = 9;
+  uint32 t4_safety_ns = 10;
+  uint32 t5_send_ns = 11;
+  uint32 total_ns = 12;
+  uint32 esc_event_present = 13;
+  uint32 esc_event_ch = 14;
+  uint32 esc_event_code = 15;
+  uint32 esc_event_count = 16;
+  uint64 esc_event_first_us = 17;
+  uint64 esc_event_last_us = 18;
+}

@@ -1,0 +1,42 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message LogTrackingDataData {
+  uint64 timestamp_ns = 1;
+  uint64 task_seq = 2;
+  uint32 model_version = 3;
+  uint32 process_status = 4;
+  uint64 task_created_ns = 5;
+  uint64 infer_done_ns = 6;
+  repeated float target_body_pos = 7;
+  repeated float target_body_vel = 8;
+  repeated float target_world_pos = 9;
+  repeated float target_world_vel = 10;
+  repeated float robot_world_pos = 11;
+  float robot_yaw = 12;
+  uint32 target_valid = 13;
+  uint32 robot_pose_valid = 14;
+  uint32 vae_seq = 15;
+  uint32 vae_fresh = 16;
+  bytes _resv0 = 17;
+  uint32 obs_size = 18;
+  repeated float obs = 19;
+  uint32 action_size = 20;
+  repeated float raw_action = 21;
+  float output_vel_x = 22;
+  float output_yaw_rate = 23;
+  float output_gimbal_yaw = 24;
+  uint32 infer_cost_us = 25;
+  float proximity_dist = 26;
+  float pf_ref_dist = 27;
+  float pf_ref_angle = 28;
+  uint32 trajectory_len = 29;
+  uint32 fallback_flags = 30;
+  uint32 reserved1 = 31;
+  float fusion_jump_logit = 39;
+  float fusion_vx_residual = 40;
+  float fusion_wz_residual = 41;
+  uint32 reserved2 = 42;
+  float fusion_obs_frame_age = 43;
+}

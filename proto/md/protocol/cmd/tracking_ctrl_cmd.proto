@@ -1,0 +1,14 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message TrackingCtrlCmdData {
+  uint32 selected_id = 1;
+  uint32 start_tracking = 2;
+  float selected_pos_x = 3;
+  float selected_pos_y = 4;
+  uint32 request_mode = 5;
+  uint32 reserved1 = 6;
+  uint32 reserved2 = 7;
+  uint32 reserved3 = 8;
+}

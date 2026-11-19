@@ -1,0 +1,11 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message UwbRcStatusEntry {
+  uint32 battery = 1;
+  uint32 is_charging = 2;
+  sint32 rssi = 3;
+  uint32 receiver_type = 4;
+  uint32 receiver_index = 5;
+  string sn_suffix = 6;
+}

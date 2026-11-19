@@ -1,0 +1,16 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message MicStatusData {
+  uint32 active_kind = 1;
+  bytes active_mac = 2;
+  uint32 switching = 3;
+  bytes target_mac = 4;
+  uint32 last_event_kind = 5;
+  uint32 last_event_reason = 6;
+  uint32 result_seq = 7;
+  uint32 input_valid = 8;
+  uint32 input_level = 9;
+  uint32 record_audio_enabled = 10;
+}

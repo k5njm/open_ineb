@@ -1,0 +1,35 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message LocalMappingCompactMapData {
+  uint32 compact_version = 1;
+  uint32 flags = 2;
+  uint32 active_block_count = 3;
+  uint32 words_per_active_block = 4;
+  uint64 map_generation = 5;
+  uint64 window_revision = 6;
+  uint64 source_task_seq = 7;
+  uint64 source_timestamp_ns = 8;
+  repeated sint32 window_origin_block_xy = 9;
+  uint64 active_block_mask = 10;
+  uint64 selected_block_mask = 11;
+  float cell_resolution_m = 12;
+  float occupied_threshold_m = 13;
+  float truncation_distance_m = 14;
+  float max_tsdf_weight = 15;
+  uint32 observed_cell_count = 16;
+  uint32 occupied_cell_count = 17;
+  uint32 reserved = 18;
+  uint64 robot_pose_timestamp_ns = 19;
+  repeated double robot_pose_q_xyzw = 20;
+  repeated double robot_pose_pos_xyz = 21;
+  repeated float robot_pose_vel_xyz = 22;
+  repeated float robot_pose_acc_xyz = 23;
+  uint32 robot_pose_state = 24;
+  bytes robot_pose_reserved = 25;
+  float robot_pose_q_sd = 26;
+  float robot_pose_pose_sd = 27;
+  float robot_pose_vel_sd = 28;
+  repeated uint64 occupied_block_words = 29;
+}

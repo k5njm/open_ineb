@@ -1,0 +1,9 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message SysLoadingDataData {
+  repeated sint32 per_core_cpu = 1;
+  repeated sint32 top100_cpu = 2;
+  bytes top100_proc = 3;
+}

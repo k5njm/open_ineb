@@ -1,0 +1,14 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message PncLocoData {
+  repeated float obs = 1;
+  repeated float actions = 2;
+  float inference_time = 3;
+  uint32 network_type = 4;
+  uint32 moe_available = 5;
+  uint32 moe_in_recover = 6;
+  uint32 moe_switch_event = 7;
+  float moe_w_recover_raw = 8;
+  float moe_w_recover_ema = 9;
+}

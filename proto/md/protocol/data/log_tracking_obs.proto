@@ -1,0 +1,32 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message LogTrackingObsData {
+  uint64 timestamp_ns = 1;
+  uint64 utc_timestamp_ns = 2;
+  float reference_pos_x = 3;
+  float reference_pos_y = 4;
+  float target_vel_x = 5;
+  float target_vel_y = 6;
+  float reference_distance = 7;
+  float reference_angle = 8;
+  float is_stationary = 9;
+  float robot_vel_xy = 10;
+  float gyro_x = 11;
+  float gyro_y = 12;
+  float gyro_z = 13;
+  float joint_l1_pos = 14;
+  float joint_r1_pos = 15;
+  float joint_l2_pos = 16;
+  float joint_r2_pos = 17;
+  float joint_l1_vel = 18;
+  float joint_r1_vel = 19;
+  float joint_l2_vel = 20;
+  float joint_r2_vel = 21;
+  float joint_lw_vel = 22;
+  float joint_rw_vel = 23;
+  float grav_x = 24;
+  float grav_y = 25;
+  float grav_z = 26;
+}

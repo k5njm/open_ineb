@@ -1,0 +1,10 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message CommonAccessoryListRspData {
+  uint32 ret_code = 1;
+  uint32 count = 2;
+  uint32 entries_len = 3;
+  bytes entries = 4;
+}

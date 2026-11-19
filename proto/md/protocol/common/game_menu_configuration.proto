@@ -1,0 +1,10 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message GameMenuConfiguration {
+  uint32 version = 1;
+  uint32 revision = 2;
+  uint32 catalog_hash = 3;
+  bytes slots = 4;
+  bytes others = 5;
+}

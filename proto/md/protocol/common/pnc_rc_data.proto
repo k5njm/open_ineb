@@ -1,0 +1,8 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message PncRcData {
+  uint32 state = 1;
+  uint32 mode = 2;
+  repeated float channel_data = 3;
+}

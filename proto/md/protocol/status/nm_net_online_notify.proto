@@ -1,0 +1,15 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message NmNetOnlineNotifyData {
+  uint32 trigger_source = 1;
+  uint32 net_type = 2;
+  uint32 channel = 3;
+  sint32 rssi = 4;
+  bytes ipv4 = 5;
+  uint32 ssid_len = 6;
+  bytes ssid = 7;
+  bytes uuid = 8;
+  bytes resv = 9;
+}

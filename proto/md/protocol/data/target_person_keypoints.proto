@@ -1,0 +1,20 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message TargetPersonKeypointsData {
+  uint64 detection_timestamp_ns = 1;
+  uint32 state = 2;
+  uint32 tracking_id = 3;
+  uint32 target_type = 4;
+  uint32 keypoint_count = 5;
+  repeated float bbox_xywh = 6;
+  repeated float keypoints = 7;
+  uint32 image_width = 8;
+  uint32 image_height = 9;
+  float intrinsics_fx = 10;
+  float intrinsics_fy = 11;
+  float intrinsics_cx = 12;
+  float intrinsics_cy = 13;
+  float camera_mount_pitch_rad = 14;
+}

@@ -1,0 +1,19 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message PlannerRcSampleData {
+  uint32 schema_version = 1;
+  uint32 source = 2;
+  uint32 axis_count = 3;
+  uint32 source_clock_domain = 4;
+  uint64 source_instance_id = 5;
+  uint64 sequence = 6;
+  uint64 source_timestamp_ns = 7;
+  uint64 receive_mono_ns = 8;
+  repeated float axes = 9;
+  uint64 button_down_mask = 10;
+  uint64 button_pressed_mask = 11;
+  uint64 button_released_mask = 12;
+  uint32 switch_state = 13;
+}

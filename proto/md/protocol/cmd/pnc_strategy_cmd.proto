@@ -1,0 +1,9 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message PncStrategyCmdData {
+  uint32 strategy = 1;
+  repeated float params = 2;
+  uint32 flags = 3;
+}

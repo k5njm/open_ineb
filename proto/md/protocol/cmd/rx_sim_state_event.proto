@@ -1,0 +1,13 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+import "md/protocol/common/common_header.proto";
+
+message RxSimStateEventData {
+  md.protocol.common.CommonHeader header = 1;
+  uint32 event_type = 2;
+  uint32 motor_id = 3;
+  bytes _pad = 4;
+  sint32 value = 5;
+  uint64 timestamp_ns = 6;
+}

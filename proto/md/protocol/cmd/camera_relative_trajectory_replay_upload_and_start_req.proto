@@ -1,0 +1,22 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message CameraRelativeTrajectoryReplayUploadAndStartReqData {
+  uint32 version = 1;
+  uint32 client_request_id = 2;
+  uint32 trajectory_id_len = 3;
+  bytes trajectory_id = 4;
+  uint32 trajectory_name_len = 5;
+  bytes trajectory_name = 6;
+  uint32 sample_count = 7;
+  repeated uint32 time_ms = 8;
+  repeated float bearing_offset_rad = 9;
+  repeated float distance_ratio_offset = 10;
+  repeated float target_hfov_offset_ratio = 11;
+  uint32 has_initial_placement = 12;
+  float init_relative_bearing_deg = 13;
+  float init_relative_dist_m = 14;
+  repeated float target_vfov_offset_ratio = 15;
+  repeated float zoom = 16;
+}

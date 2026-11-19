@@ -1,0 +1,9 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message LocalMappingSurfaceSegment {
+  repeated double start_world_xy = 1;
+  repeated double end_world_xy = 2;
+  float confidence = 3;
+  uint32 reserved0 = 4;
+}

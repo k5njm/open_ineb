@@ -1,0 +1,17 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+import "md/protocol/common/pnc_imu_data.proto";
+import "md/protocol/common/pnc_joint_data.proto";
+import "md/protocol/common/pnc_chassis_data.proto";
+import "md/protocol/common/pnc_rc_data.proto";
+import "md/protocol/common/pnc_loco_data.proto";
+
+message PncDataData {
+  uint64 timestamp_ns = 1;
+  md.protocol.common.PncImuData body_imu = 2;
+  repeated md.protocol.common.PncJointData joint = 3;
+  md.protocol.common.PncChassisData chassis = 4;
+  md.protocol.common.PncRcData rc = 5;
+  md.protocol.common.PncLocoData loco = 6;
+}

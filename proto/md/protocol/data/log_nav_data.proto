@@ -1,0 +1,34 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message LogNavDataData {
+  uint64 timestamp_ns = 1;
+  uint64 nav_infer_done_ts = 2;
+  uint64 process_done_ns = 3;
+  uint64 vae_exposure_ts_ns = 4;
+  uint64 vae_infer_done_ts = 5;
+  uint32 vae_frame_id = 6;
+  repeated float obs_gyro = 7;
+  repeated float obs_grav = 8;
+  float obs_target_vel_x = 9;
+  float obs_reserved = 10;
+  float obs_yaw_cmd_input = 11;
+  repeated float obs_joint_pos = 12;
+  repeated float obs_joint_vel = 13;
+  repeated float obs_prev_action = 14;
+  repeated float obs_base_pose = 15;
+  repeated float obs_gimbal_yaw_cmd = 16;
+  repeated float obs_vae_latent = 17;
+  repeated float action_raw = 18;
+  float nav_vel_x = 19;
+  float nav_vel_z = 20;
+  uint32 nav_level = 21;
+  uint32 use_mnn = 22;
+  float heading_target_yaw = 23;
+  float heading_observed_yaw = 24;
+  float heading_error = 25;
+  float heading_compensation_yaw_rate = 26;
+  float control_jump_phase = 27;
+  uint32 heading_closedloop_active = 28;
+}

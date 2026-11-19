@@ -1,0 +1,31 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message RxControlPlannerObservationData {
+  uint32 schema_version = 1;
+  uint32 joint_layout_id = 2;
+  uint32 source_clock_domain = 3;
+  uint32 valid_fields = 4;
+  uint64 controller_instance_id = 5;
+  uint64 sequence = 6;
+  uint64 feedback_snapshot_sequence = 7;
+  uint64 sample_timestamp_us = 8;
+  uint64 capture_mono_ns = 9;
+  uint64 publish_mono_ns = 10;
+  bytes morphology_model_hash = 11;
+  bytes joint_order_hash = 12;
+  uint32 joint_count = 13;
+  uint32 lifecycle_state = 14;
+  uint32 mcu_state = 15;
+  repeated float joint_position_rad = 16;
+  repeated float joint_velocity_rad_s = 17;
+  repeated float body_quaternion_wxyz = 18;
+  repeated float gyro_body_rad_s = 19;
+  repeated float accel_body_mps2 = 20;
+  uint32 motor_error_flags = 21;
+  uint32 mcu_error_flags = 22;
+  uint32 imu_health = 23;
+  uint32 imu_failure_mask = 24;
+  uint32 controller_fsm_state = 25;
+}

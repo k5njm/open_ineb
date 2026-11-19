@@ -1,0 +1,31 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message GameBatteryDetectionData {
+  uint64 timestamp_ns = 1;
+  uint64 frame_id = 2;
+  uint32 image_width = 3;
+  uint32 image_height = 4;
+  repeated float robot_box_xyxy = 5;
+  repeated float battery_points_xy = 6;
+  float robot_confidence = 7;
+  repeated float point_confidence = 8;
+  uint32 robot_count = 9;
+  uint32 battery_count = 10;
+  uint32 detection_valid = 11;
+  uint32 reason = 12;
+  float preprocess_ms = 13;
+  float inference_ms = 14;
+  float postprocess_ms = 15;
+  float total_ms = 16;
+  uint32 geometry_valid = 17;
+  uint32 geometry_reason = 18;
+  float distance_m = 19;
+  float aim_yaw_deg = 20;
+  float heading_deg = 21;
+  float incidence_deg = 22;
+  float reprojection_error_px = 23;
+  float geometry_ms = 24;
+  sint32 camera_profile_id = 25;
+}

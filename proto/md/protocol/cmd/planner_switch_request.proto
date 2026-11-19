@@ -1,0 +1,17 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message PlannerSwitchRequestData {
+  uint32 schema_version = 1;
+  uint32 flags = 2;
+  uint64 request_id = 3;
+  uint64 expected_engagement_id = 4;
+  uint64 request_mono_ns = 5;
+  uint64 deadline_mono_ns = 6;
+  uint32 target_planner_id_length = 7;
+  bytes target_planner_id = 8;
+  uint32 reason_code = 9;
+  uint64 expected_active_planner_epoch_id = 10;
+  uint64 expected_authority_generation = 11;
+}

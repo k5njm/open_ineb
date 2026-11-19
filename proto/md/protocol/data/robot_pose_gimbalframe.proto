@@ -1,0 +1,13 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message RobotPoseGimbalframeData {
+  repeated double q_xyzw = 1;
+  repeated float vel_xyz = 2;
+  repeated float acc_xyz = 3;
+  uint32 state = 4;
+  float q_sd = 5;
+  float vel_sd = 6;
+  uint64 timestamp_ns = 7;
+}

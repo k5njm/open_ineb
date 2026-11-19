@@ -1,0 +1,9 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message AudioPlayFileReqData {
+  uint32 session_id = 1;
+  uint32 play_action = 2;
+  bytes audio_path = 3;
+}

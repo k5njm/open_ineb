@@ -1,0 +1,32 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message TargetGestureData {
+  uint64 detection_timestamp_ns = 1;
+  uint32 state = 2;
+  uint32 tracking_id = 3;
+  uint32 target_type = 4;
+  uint32 motion_valid = 5;
+  uint32 motion_id = 6;
+  float confidence = 7;
+  repeated float target_bbox_xywh = 8;
+  float yolo_match_iou = 9;
+  uint32 left_hand_detected = 10;
+  uint32 right_hand_detected = 11;
+  uint32 left_hand21_detected = 12;
+  uint32 right_hand21_detected = 13;
+  repeated float left_roi_xywh = 14;
+  repeated float right_roi_xywh = 15;
+  repeated float left_hand21 = 16;
+  repeated float right_hand21 = 17;
+  uint32 observation_state = 18;
+  uint32 episode_state = 19;
+  uint32 gesture_source = 20;
+  uint32 event_valid = 21;
+  uint32 raw_motion_id = 22;
+  uint32 stable_motion_id = 23;
+  uint32 event_seq = 24;
+  uint32 session_seq = 25;
+  uint64 producer_instance_id = 26;
+}

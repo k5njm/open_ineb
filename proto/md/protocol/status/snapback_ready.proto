@@ -1,0 +1,11 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message SnapbackReadyData {
+  bytes snapshot_id = 1;
+  uint32 event_type = 2;
+  uint64 occurred_at_ms = 3;
+  bytes metadata = 4;
+  uint64 capture_version = 5;
+}

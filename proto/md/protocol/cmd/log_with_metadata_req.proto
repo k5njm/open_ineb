@@ -1,0 +1,10 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message LogWithMetadataReqData {
+  uint32 ID = 1;
+  uint64 timestamp = 2;
+  uint32 length = 3;
+  bytes buf = 4;
+}

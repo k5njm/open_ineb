@@ -1,0 +1,9 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message SnapbackCaptureControlData {
+  uint32 enabled = 1;
+  uint32 manual_capture_enabled = 2;
+  uint64 capture_version = 3;
+}

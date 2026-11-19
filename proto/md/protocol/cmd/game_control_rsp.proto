@@ -1,0 +1,12 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message GameControlRspData {
+  uint32 ret_code = 1;
+  uint32 sub_ret_code = 2;
+  uint64 timestamp_ns = 3;
+  uint32 game_type = 4;
+  uint32 action = 5;
+  uint32 session_id = 6;
+}

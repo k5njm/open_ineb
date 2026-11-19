@@ -1,0 +1,13 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message ParamChangeEventData {
+  bytes key = 1;
+  uint32 value_type = 2;
+  float float_value = 3;
+  sint32 int32_value = 4;
+  bool bool_value = 5;
+  bytes string_value = 6;
+  uint64 timestamp_ms = 7;
+}

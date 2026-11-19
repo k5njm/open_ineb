@@ -1,0 +1,13 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message RxBatteryVersionData {
+  uint32 status = 1;
+  uint64 request_id = 2;
+  uint32 cache_generation = 3;
+  uint32 captured_mcu_ms = 4;
+  uint32 mcu_uptime_ms = 5;
+  uint32 software_version = 6;
+  uint32 hardware_version = 7;
+}

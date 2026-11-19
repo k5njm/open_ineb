@@ -1,0 +1,21 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message JointObservation {
+  uint64 sample_ts_ns = 1;
+  uint64 sample_seq = 2;
+  repeated float position = 3;
+  repeated float velocity = 4;
+  uint32 online_mask = 5;
+  repeated float torque = 6;
+  repeated float torque_tar = 7;
+  repeated sint32 board_temp = 8;
+  repeated sint32 motor_temp = 9;
+  bytes bus_voltage = 10;
+  bytes bus_current = 11;
+  bytes enable_status = 12;
+  repeated sint32 id = 13;
+  repeated sint32 ud = 14;
+  repeated sint32 uq = 15;
+  repeated uint32 err_code = 16;
+}

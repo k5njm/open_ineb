@@ -1,0 +1,23 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message LedGtsamPoseData {
+  uint64 timestamp_ns = 1;
+  repeated float position_body_xyz = 2;
+  float normal_body_yaw_deg = 3;
+  float position_sigma_m = 4;
+  float yaw_sigma_deg = 5;
+  float age_s = 6;
+  sint32 best_mode_id = 7;
+  uint32 lifecycle = 8;
+  uint32 used_measurement = 9;
+  uint32 n_hypotheses = 10;
+  uint32 position_valid = 11;
+  uint32 orientation_valid = 12;
+  uint32 pose_valid = 13;
+  uint32 orientation_state = 14;
+  uint32 orientation_available = 15;
+  float orientation_age_s = 16;
+  float orientation_conflict_age_s = 17;
+}

@@ -1,0 +1,15 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message CaptureControlsStatusData {
+  bool is_pro_mode = 1;
+  uint32 shutter_mode = 2;
+  uint32 iso_mode = 3;
+  uint32 wb_mode = 4;
+  uint32 ev_mode = 5;
+  uint64 shutter_ns = 6;
+  uint32 iso = 7;
+  uint32 wb_kelvin = 8;
+  float ev_compensation = 9;
+}

@@ -1,0 +1,8 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message NmWifiProvisionResultReqData {
+  bytes uuid = 1;
+  bytes resv = 2;
+}

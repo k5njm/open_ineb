@@ -1,0 +1,13 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message PmuDataData {
+  uint32 battery_voltage_mv = 1;
+  sint32 battery_current_ma = 2;
+  uint32 battery_capacity_pct = 3;
+  sint32 pack_temperature_deciC = 4;
+  uint32 fault_flags = 5;
+  repeated uint32 cell_voltages_mv = 6;
+  repeated sint32 cell_currents_ma = 7;
+}

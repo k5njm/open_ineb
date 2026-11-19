@@ -1,0 +1,15 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message RxControlFbQuatData {
+  uint64 timestamp_ns = 1;
+  uint64 cycle = 2;
+  uint32 write_idx = 3;
+  uint32 imu_health = 4;
+  uint32 imu_failure_mask = 5;
+  repeated float raw_q = 6;
+  float buf_raw_q0 = 7;
+  float buf_nwu_q0 = 8;
+  float imu_qnorm2 = 9;
+}

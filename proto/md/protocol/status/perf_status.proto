@@ -1,0 +1,10 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+import "md/protocol/common/process_perf_metrics.proto";
+import "md/protocol/common/system_perf_metrics.proto";
+
+message PerfStatusData {
+  repeated md.protocol.common.ProcessPerfMetrics top_processes = 1;
+  md.protocol.common.SystemPerfMetrics system = 2;
+}

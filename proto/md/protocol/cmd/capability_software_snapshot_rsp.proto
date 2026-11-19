@@ -1,0 +1,21 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+import "md/protocol/common/pitch_stick_capability.proto";
+import "md/protocol/common/camera_capture_controls_capability.proto";
+import "md/protocol/common/game_catalog_capability.proto";
+import "md/protocol/common/camera_record_response_capability.proto";
+import "md/protocol/common/local_http_capability.proto";
+import "md/protocol/common/voice_language_capability.proto";
+import "md/protocol/common/trajectory_replay_capability.proto";
+
+message CapabilitySoftwareSnapshotRspData {
+  uint32 ret_code = 1;
+  md.protocol.common.PitchStickCapability pitch_stick = 2;
+  md.protocol.common.CameraCaptureControlsCapability camera_capture_controls = 3;
+  md.protocol.common.GameCatalogCapability games = 4;
+  md.protocol.common.CameraRecordResponseCapability camera_record_response = 5;
+  md.protocol.common.LocalHttpCapability local_http = 6;
+  md.protocol.common.VoiceLanguageCapability voice_language = 7;
+  md.protocol.common.TrajectoryReplayCapability trajectory_replay = 8;
+}

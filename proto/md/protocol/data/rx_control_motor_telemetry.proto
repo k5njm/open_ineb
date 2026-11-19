@@ -1,0 +1,14 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+import "md/protocol/common/rx_motor_telemetry_item.proto";
+
+message RxControlMotorTelemetryData {
+  uint64 publish_monotonic_ns = 1;
+  uint64 control_received_monotonic_ns = 2;
+  uint64 control_sample_time_us = 3;
+  uint64 extras_received_monotonic_ns = 4;
+  uint64 extras_sample_time_us = 5;
+  uint32 extras_sample_seq = 6;
+  repeated md.protocol.common.RxMotorTelemetryItem motors = 7;
+}

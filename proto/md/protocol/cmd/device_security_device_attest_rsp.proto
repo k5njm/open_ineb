@@ -1,0 +1,10 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message DeviceSecurityDeviceAttestRspData {
+  uint32 ret_code = 1;
+  uint32 cert_len = 2;
+  bytes cert_der = 3;
+  bytes signature = 4;
+}

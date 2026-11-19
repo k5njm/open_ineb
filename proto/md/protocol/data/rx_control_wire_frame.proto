@@ -1,0 +1,22 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message RxControlWireFrameData {
+  uint64 timestamp_ns = 1;
+  uint64 n = 2;
+  uint64 ts_us = 3;
+  uint32 direction = 4;
+  uint32 kind = 5;
+  uint32 ok = 6;
+  uint32 cmd_set = 7;
+  uint32 cmd_id = 8;
+  uint32 need_ack = 9;
+  uint32 seq = 10;
+  uint32 payload_size = 11;
+  repeated sint32 mc_pos_w = 12;
+  repeated sint32 mc_kp_w = 13;
+  repeated sint32 mc_kd_w = 14;
+  repeated sint32 mc_tff_w = 15;
+  bytes raw_payload = 16;
+}

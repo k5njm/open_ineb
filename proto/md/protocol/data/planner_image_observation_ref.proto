@@ -1,0 +1,20 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message PlannerImageObservationRefData {
+  uint32 schema_version = 1;
+  uint32 camera_id = 2;
+  uint32 pixel_format = 3;
+  uint32 sensor_clock_domain = 4;
+  uint64 camera_instance_id = 5;
+  uint64 frame_sequence = 6;
+  uint64 sensor_timestamp_ns = 7;
+  uint64 receive_mono_ns = 8;
+  uint32 width = 9;
+  uint32 height = 10;
+  uint32 stride_bytes = 11;
+  uint32 data_bytes = 12;
+  uint32 transport = 13;
+  bytes calibration_hash = 14;
+}

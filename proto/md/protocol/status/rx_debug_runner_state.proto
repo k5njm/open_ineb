@@ -1,0 +1,15 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message RxDebugRunnerStateData {
+  uint32 fsm_state = 1;
+  uint32 prev_fsm_state = 2;
+  uint32 has_active_runner = 3;
+  uint32 active_phase = 4;
+  bytes active_test_id = 5;
+  float elapsed_s = 6;
+  uint32 ui_seq_echo = 7;
+  uint32 last_emergency_trigger = 8;
+  uint64 timestamp_ns = 9;
+}

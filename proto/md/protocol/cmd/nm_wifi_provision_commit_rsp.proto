@@ -1,0 +1,11 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message NmWifiProvisionCommitRspData {
+  uint32 result = 1;
+  uint32 timeout_sec = 2;
+  bytes resv = 3;
+  uint32 total_timeout_sec = 4;
+  bytes uuid = 5;
+}

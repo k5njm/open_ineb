@@ -1,0 +1,40 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message LogTrackingBypassDataData {
+  uint64 timestamp_ns = 1;
+  uint64 vae_exposure_ts_ns = 2;
+  uint64 vae_infer_done_ts = 3;
+  uint32 vae_frame_id = 4;
+  repeated float obs_follow_point = 5;
+  repeated float obs_path_tangent = 6;
+  repeated float obs_lookahead_points = 7;
+  repeated float obs_target_vel = 8;
+  float obs_is_stationary = 9;
+  float obs_robot_vel_x = 10;
+  repeated float obs_gyro = 11;
+  repeated float obs_joint_pos = 12;
+  repeated float obs_joint_vel = 13;
+  repeated float obs_gravity = 14;
+  repeated float obs_last_action = 15;
+  repeated float obs_vae_latent = 16;
+  repeated float action_raw = 17;
+  float action_vel_x = 18;
+  float action_omega_z = 19;
+  float infer_time_ms = 20;
+  float vae_age_ms = 21;
+  uint32 nav_level = 22;
+  uint32 target_valid = 23;
+  uint32 v4_active = 24;
+  uint32 reserved = 25;
+  double target_world_pos_x = 26;
+  double target_world_pos_y = 27;
+  float target_world_vel_x = 28;
+  float target_world_vel_y = 29;
+  double robot_world_pos_x = 30;
+  double robot_world_pos_y = 31;
+  float robot_world_vel_x = 32;
+  float robot_world_vel_y = 33;
+  float robot_yaw = 34;
+}

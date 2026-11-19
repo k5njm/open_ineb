@@ -1,0 +1,8 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message PitchStickStatusData {
+  uint32 version = 1;
+  uint64 source_monotonic_ns = 2;
+}

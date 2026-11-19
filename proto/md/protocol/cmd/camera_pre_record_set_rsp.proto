@@ -1,0 +1,7 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message CameraPreRecordSetRspData {
+  uint32 error_code = 2;
+}

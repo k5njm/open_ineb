@@ -1,0 +1,14 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+import "md/protocol/common/target_pose_fields.proto";
+
+message TargetEstimateWorldframeData {
+  md.protocol.common.TargetPoseFields pose = 1;
+  uint64 state_timestamp_ns = 2;
+  uint64 last_measurement_timestamp_ns = 3;
+  uint32 tracking_id = 4;
+  uint32 target_type = 5;
+  uint32 target_generation = 6;
+  float dog_distance_scale = 7;
+}

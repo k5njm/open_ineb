@@ -1,0 +1,14 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message UwbLeftDataData {
+  uint64 sensor_timestamp_ns = 1;
+  double distance = 2;
+  double angle = 3;
+  double rssi = 4;
+  uint32 quality = 5;
+  uint32 status = 6;
+  uint32 valid = 7;
+  repeated double ant_iq = 8;
+}

@@ -1,0 +1,15 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message ControllerEngageRequestData {
+  uint32 schema_version = 1;
+  uint32 body_controller_kind = 2;
+  uint32 flags = 3;
+  uint64 request_id = 4;
+  uint64 expected_controller_instance_id = 5;
+  uint64 request_mono_ns = 6;
+  uint64 deadline_mono_ns = 7;
+  uint32 target_planner_id_length = 8;
+  bytes target_planner_id = 9;
+}

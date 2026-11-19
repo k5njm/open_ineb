@@ -1,0 +1,14 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message PnlStereoImageMetaLData {
+  uint32 frame_seq = 1;
+  uint64 data_ts_ns = 2;
+  uint64 publish_ns = 3;
+  uint64 callback_enter_ns = 4;
+  uint32 image_width = 5;
+  uint32 image_height = 6;
+  uint64 buf_head_pts = 7;
+  uint64 buf_tail_pts = 8;
+}

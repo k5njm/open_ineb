@@ -1,0 +1,10 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message TrackGalleryState {
+  uint32 track_id = 1;
+  uint32 gallery_size = 2;
+  uint32 max_gallery_size = 3;
+  uint32 time_since_update = 4;
+  float min_cosine_to_gallery = 5;
+}

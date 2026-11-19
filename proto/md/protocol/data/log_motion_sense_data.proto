@@ -1,0 +1,47 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message LogMotionSenseDataData {
+  uint64 timestamp_ns = 1;
+  uint32 phase = 2;
+  uint32 reference_locked = 3;
+  uint32 fresh = 4;
+  uint32 gesture_jump = 5;
+  float raw_pitch_deg = 6;
+  float raw_roll_deg = 7;
+  float raw_yaw_deg = 8;
+  float filtered_pitch_deg = 9;
+  float filtered_roll_deg = 10;
+  float pitch_ref_deg = 11;
+  float roll_ref_deg = 12;
+  float pitch_delta_deg = 13;
+  float roll_delta_deg = 14;
+  float alpha_pitch = 15;
+  float alpha_roll = 16;
+  float decouple_k = 17;
+  float decouple_k_pos = 18;
+  float decouple_k_neg = 19;
+  float decouple_correction_deg = 20;
+  float pitch_eff_deg = 21;
+  float ratio_now = 22;
+  float shaped_pitch = 23;
+  float shaped_roll = 24;
+  float vx_target = 25;
+  float vx_raw = 26;
+  float vx_out = 27;
+  float accel_limit_used = 28;
+  uint32 steer_hold_active = 29;
+  uint32 braking = 30;
+  float yaw_rate_roll_part = 31;
+  float yaw_rate_assist_part = 32;
+  float yaw_rate_out = 33;
+  float yaw_rate_dps = 34;
+  float steer_gain = 35;
+  float speed_norm = 36;
+  float lean_target_rad = 37;
+  float lean_out_rad = 38;
+  float max_lean_rad = 39;
+  float recenter_step_pitch_deg = 40;
+  float recenter_step_roll_deg = 41;
+}

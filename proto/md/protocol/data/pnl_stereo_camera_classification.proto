@@ -1,0 +1,23 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message PnlStereoCameraClassificationData {
+  uint32 schema_version = 1;
+  uint64 producer_epoch_ns = 2;
+  uint64 sample_seq = 3;
+  uint64 cache_seq = 4;
+  repeated uint64 image_pts_ns = 5;
+  repeated uint32 image_frame_seq = 6;
+  uint64 rectified_cache_ns = 7;
+  uint64 inference_done_ns = 8;
+  bytes current_status = 9;
+  bytes raw_class = 10;
+  repeated float raw_confidence = 11;
+  bytes stable_confirmed = 12;
+  bytes stable_class = 13;
+  repeated uint64 last_valid_image_pts_ns = 14;
+  bytes grass_detected = 15;
+  repeated float inference_wall_ms = 16;
+  repeated float inference_thread_ms = 17;
+}

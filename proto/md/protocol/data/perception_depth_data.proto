@@ -1,0 +1,11 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message PerceptionDepthDataData {
+  uint32 timestamp = 1;
+  uint32 seq = 2;
+  uint64 phys_addr = 3;
+  uint64 img_l_pts = 4;
+  uint64 img_r_pts = 5;
+}

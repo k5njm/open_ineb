@@ -1,0 +1,11 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message ImuObservation {
+  uint64 sample_ts_ns = 1;
+  repeated float gyro = 2;
+  repeated float accel = 3;
+  repeated float grav = 4;
+  repeated float euler = 5;
+  uint32 online = 6;
+}

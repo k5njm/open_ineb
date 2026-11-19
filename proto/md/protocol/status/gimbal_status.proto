@@ -1,0 +1,8 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message GimbalStatusData {
+  uint32 angle1 = 1;
+  uint32 angle2 = 2;
+}

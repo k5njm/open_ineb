@@ -1,0 +1,7 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message SystemFactoryResetRspData {
+  uint32 ret_code = 1;
+}

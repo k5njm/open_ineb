@@ -1,0 +1,20 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message RxControlAuxFeedbackData {
+  uint64 timestamp_ns = 1;
+  uint64 feedback_timestamp_us = 2;
+  uint32 has_aux_feedback = 3;
+  uint32 capability_flags = 4;
+  uint32 mode_flags = 5;
+  uint32 gripper_active_mask = 6;
+  uint32 gripper_valid_mask = 7;
+  uint32 head_present_mask = 8;
+  repeated float gripper_position = 9;
+  repeated float gripper_velocity = 10;
+  repeated float gripper_torque = 11;
+  repeated float gripper_ref_torque = 12;
+  repeated sint32 gripper_temp = 13;
+  repeated uint32 gripper_error_code = 14;
+}

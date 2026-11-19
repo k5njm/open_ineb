@@ -1,0 +1,13 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message RcFsmStateData {
+  uint32 timestamp_ms = 1;
+  uint32 prev_state = 2;
+  uint32 prev_sub = 3;
+  uint32 key_id = 4;
+  uint32 event_type = 5;
+  uint32 next_state = 6;
+  uint32 next_sub = 7;
+}

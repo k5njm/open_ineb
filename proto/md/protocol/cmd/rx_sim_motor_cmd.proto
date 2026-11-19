@@ -1,0 +1,13 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message RxSimMotorCmdData {
+  repeated float position = 1;
+  repeated float velocity = 2;
+  repeated float kp = 3;
+  repeated float kd = 4;
+  repeated float torque_ff = 5;
+  uint32 enable_mask = 6;
+  uint64 timestamp_ns = 7;
+}

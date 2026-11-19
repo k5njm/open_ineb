@@ -1,0 +1,10 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message RxControlMcuLogData {
+  uint64 timestamp_ns = 1;
+  uint64 wall_us = 2;
+  bytes level = 3;
+  bytes text = 4;
+}

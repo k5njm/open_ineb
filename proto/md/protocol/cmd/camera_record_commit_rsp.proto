@@ -1,0 +1,13 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message CameraRecordCommitRspData {
+  uint32 protocol_version = 1;
+  uint32 action = 2;
+  uint32 ret_code = 3;
+  uint32 owner = 4;
+  uint32 coordinator_epoch = 5;
+  uint64 transaction_id = 6;
+  uint32 target_state_reached = 7;
+}

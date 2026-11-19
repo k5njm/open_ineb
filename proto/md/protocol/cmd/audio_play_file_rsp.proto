@@ -1,0 +1,9 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message AudioPlayFileRspData {
+  uint32 return_code = 1;
+  uint32 session_id = 2;
+  uint64 timestamp_ns = 3;
+}

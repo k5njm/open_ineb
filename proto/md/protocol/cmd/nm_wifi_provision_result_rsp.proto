@@ -1,0 +1,17 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message NmWifiProvisionResultRspData {
+  uint32 result = 1;
+  uint32 uuid_match = 2;
+  uint32 state = 3;
+  uint32 fail_reason = 4;
+  bytes uuid = 5;
+  uint32 ssid_len = 6;
+  bytes ssid = 7;
+  bytes ipv4 = 8;
+  uint32 channel = 9;
+  sint32 rssi = 10;
+  bytes resv = 11;
+}

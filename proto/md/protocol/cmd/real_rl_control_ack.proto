@@ -1,0 +1,13 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message RealRlControlAckData {
+  uint32 result_code = 1;
+  uint32 requested_inference_mode = 2;
+  uint32 rollout_recording_requested = 3;
+  uint32 control_source = 4;
+  uint32 recording_duration_ms = 5;
+  uint64 client_session_id = 6;
+  float requested_exploration_scale = 7;
+}

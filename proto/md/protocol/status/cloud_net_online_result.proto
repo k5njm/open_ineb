@@ -1,0 +1,12 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message CloudNetOnlineResultData {
+  uint32 result = 1;
+  uint32 net_type = 2;
+  uint32 endpoint_count = 3;
+  bytes uuid = 4;
+  bytes resv = 5;
+  sint32 cloud_code = 6;
+}

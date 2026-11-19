@@ -1,0 +1,10 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message HmsQueryActiveData {
+  uint32 filter_kind = 1;
+  uint32 _pad0 = 2;
+  uint32 module_id = 3;
+  uint64 request_id = 4;
+}

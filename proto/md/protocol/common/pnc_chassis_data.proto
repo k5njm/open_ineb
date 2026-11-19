@@ -1,0 +1,12 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message PncChassisData {
+  uint32 state = 1;
+  uint32 mode = 2;
+  float velocity_x = 3;
+  float velocity_z = 4;
+  float velocity_x_tar = 5;
+  float velocity_z_tar = 6;
+  uint32 jump_cmd = 7;
+}

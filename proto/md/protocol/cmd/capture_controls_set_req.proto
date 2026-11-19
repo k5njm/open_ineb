@@ -1,0 +1,15 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message CaptureControlsSetReqData {
+  uint32 update_mask = 1;
+  bool is_pro_mode = 2;
+  uint32 shutter_mode = 3;
+  uint64 shutter_ns = 4;
+  uint32 iso_mode = 5;
+  uint32 iso = 6;
+  uint32 wb_mode = 7;
+  uint32 wb_kelvin = 8;
+  float ev_compensation = 9;
+}

@@ -1,0 +1,10 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message VoiceLanguageStatusData {
+  uint32 version = 1;
+  uint64 source_monotonic_ns = 2;
+  uint32 supported_mask = 3;
+  uint32 current_language = 4;
+}

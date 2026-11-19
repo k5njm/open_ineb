@@ -1,0 +1,15 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message SchedulerStatusData {
+  uint32 current_mode = 1;
+  uint32 sub_mode = 2;
+  uint32 request_source = 3;
+  uint32 is_locked = 4;
+  uint32 is_paused = 5;
+  uint64 timestamp_ns = 6;
+  bytes sub_mode_state = 7;
+  uint32 ego_active = 8;
+  uint32 obstacle_avoidance_flags = 9;
+}

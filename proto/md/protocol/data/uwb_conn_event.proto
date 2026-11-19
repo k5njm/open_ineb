@@ -1,0 +1,9 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message UwbConnEventData {
+  uint32 device_type = 1;
+  uint32 device_idx = 2;
+  uint32 is_connected = 3;
+}

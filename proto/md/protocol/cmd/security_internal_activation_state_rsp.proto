@@ -1,0 +1,9 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message SecurityInternalActivationStateRspData {
+  uint32 ret_code = 1;
+  uint32 state = 2;
+  uint64 state_changed_at = 3;
+}

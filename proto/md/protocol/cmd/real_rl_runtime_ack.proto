@@ -1,0 +1,20 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message RealRlRuntimeAckData {
+  uint32 version = 1;
+  uint32 operation = 2;
+  uint32 result_code = 3;
+  uint32 model_ready = 4;
+  uint32 collector_ready = 5;
+  uint32 collector_fault = 6;
+  uint64 request_controller_instance_id = 7;
+  uint64 request_generation = 8;
+  uint64 runtime_instance_id = 9;
+  uint64 applied_controller_instance_id = 10;
+  uint64 applied_generation = 11;
+  uint32 applied_inference_mode = 12;
+  uint32 applied_rollout_recording_requested = 13;
+  float applied_exploration_scale = 14;
+}

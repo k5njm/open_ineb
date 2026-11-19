@@ -1,0 +1,7 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message VoiceLanguageCapability {
+  uint32 version = 1;
+  uint32 supported_mask = 2;
+}

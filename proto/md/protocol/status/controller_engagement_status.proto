@@ -1,0 +1,15 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message ControllerEngagementStatusData {
+  uint32 schema_version = 1;
+  uint32 state = 2;
+  uint32 body_controller_kind = 3;
+  uint64 controller_instance_id = 4;
+  uint64 request_id = 5;
+  uint64 engagement_id = 6;
+  uint64 status_sequence = 7;
+  uint64 status_mono_ns = 8;
+  uint32 reject_reason = 9;
+}

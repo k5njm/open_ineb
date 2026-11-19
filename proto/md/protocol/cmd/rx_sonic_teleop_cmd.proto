@@ -1,0 +1,31 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message RxSonicTeleopCmdData {
+  uint32 schema_version = 1;
+  sint64 timestamp_us = 2;
+  sint64 session_token = 3;
+  uint32 encoder_mode = 4;
+  uint32 num_frames = 5;
+  uint32 frame_period_us = 6;
+  repeated sint64 frame_index = 7;
+  repeated sint32 smpl_joints_q = 8;
+  repeated sint32 smpl_root_quat_q = 9;
+  repeated sint32 wrist_joint_pos_q = 10;
+  sint32 head_yaw_q = 11;
+  sint32 head_pitch_q = 12;
+  uint32 head_valid_mask = 13;
+  uint32 gripper_enable_mask = 14;
+  uint32 gripper_closed_mask = 15;
+  repeated sint32 smpl_pose_q = 16;
+  uint32 pico_button_mask = 17;
+  uint32 pico_left_trigger_q = 18;
+  uint32 pico_right_trigger_q = 19;
+  uint32 pico_left_grip_q = 20;
+  uint32 pico_right_grip_q = 21;
+  repeated sint64 source_device_timestamp_ns = 22;
+  repeated uint64 source_recv_mono_ns = 23;
+  repeated uint64 resample_target_mono_ns = 24;
+  repeated uint64 manager_output_mono_ns = 25;
+}

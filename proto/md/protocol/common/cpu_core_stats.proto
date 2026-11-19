@@ -1,0 +1,12 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message CpuCoreStats {
+  float usage_percent = 1;
+  float user_percent = 2;
+  float system_percent = 3;
+  float irq_percent = 4;
+  float softirq_percent = 5;
+  float idle_percent = 6;
+  float iowait_percent = 7;
+}

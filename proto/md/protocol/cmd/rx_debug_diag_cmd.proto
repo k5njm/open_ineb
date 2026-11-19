@@ -1,0 +1,15 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message RxDebugDiagCmdData {
+  uint32 cmd_type = 1;
+  uint32 monitor_scope = 2;
+  uint32 monitor_rate_hz = 3;
+  uint32 ui_seq = 4;
+  bytes test_id = 5;
+  bytes params_json = 6;
+  uint64 timestamp_ns = 7;
+  repeated float velocity_cmd = 8;
+  bytes policy_name = 9;
+}

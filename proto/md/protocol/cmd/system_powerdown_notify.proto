@@ -1,0 +1,9 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message SystemPowerdownNotifyData {
+  uint32 reason_code = 1;
+  uint32 remain_time_ms = 2;
+  uint32 timestamp_s = 3;
+}

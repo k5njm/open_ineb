@@ -1,0 +1,10 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message MatchPair {
+  uint32 det_idx = 1;
+  uint32 track_idx = 2;
+  uint32 match_stage = 3;
+  uint32 _pad1 = 4;
+  float final_cost = 5;
+}

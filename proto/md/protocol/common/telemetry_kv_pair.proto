@@ -1,0 +1,7 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message TelemetryKvPair {
+  bytes key = 1;
+  bytes value = 2;
+}

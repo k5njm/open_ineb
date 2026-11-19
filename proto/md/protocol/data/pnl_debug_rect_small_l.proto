@@ -1,0 +1,14 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message PnlDebugRectSmallLData {
+  uint32 frame_seq = 1;
+  uint64 data_ts_ns = 2;
+  uint64 publish_ns = 3;
+  uint32 image_width = 4;
+  uint32 image_height = 5;
+  uint32 use_jpeg = 6;
+  uint32 image_data_len = 7;
+  bytes image_data = 8;
+}

@@ -1,0 +1,14 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message ModeControlCmdData {
+  uint32 ctrl_mode = 1;
+  uint32 sub_mode = 2;
+  uint32 network_mode = 3;
+  sint32 jump_distance = 4;
+  uint32 follow_distance = 5;
+  uint32 orbit_target_angle = 6;
+  uint32 flags = 7;
+  uint32 orbit_angular_speed_5dps = 8;
+}

@@ -1,0 +1,17 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message MotionManifestSnapshotData {
+  uint32 schema_version = 1;
+  uint32 artifact_kind = 2;
+  uint32 canonicalization = 3;
+  uint64 producer_instance_id = 4;
+  uint64 engagement_id = 5;
+  uint64 planner_epoch_id = 6;
+  uint64 sequence = 7;
+  uint64 publish_mono_ns = 8;
+  bytes canonical_sha256 = 9;
+  uint32 canonical_json_bytes = 10;
+  bytes canonical_json = 11;
+}

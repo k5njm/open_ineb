@@ -1,0 +1,11 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message NetStatusData {
+  sint32 lte_rsrp = 1;
+  sint32 lte_snr = 2;
+  uint32 lte_band = 3;
+  uint32 sat_cnt = 4;
+  float gps_hdop = 5;
+}

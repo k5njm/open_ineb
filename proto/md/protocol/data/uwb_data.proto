@@ -1,0 +1,22 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message UwbDataData {
+  uint64 sensor_timestamp_ns = 1;
+  double distance = 2;
+  double angle = 3;
+  double elevation = 4;
+  double rssi = 5;
+  uint32 quality = 6;
+  uint32 status = 7;
+  uint32 valid = 8;
+  repeated double ant_iq = 9;
+  uint32 rc_index = 10;
+  sint32 imu_acc_x = 11;
+  sint32 imu_acc_y = 12;
+  sint32 imu_acc_z = 13;
+  sint32 imu_gyro_x = 14;
+  sint32 imu_gyro_y = 15;
+  sint32 imu_gyro_z = 16;
+}

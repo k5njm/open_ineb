@@ -1,0 +1,35 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message LocalMappingTaskInputIndexData {
+  uint32 index_version = 1;
+  uint32 flags = 2;
+  uint32 reset_map = 3;
+  uint32 actual_state = 4;
+  uint32 jump_flag = 5;
+  uint32 active_policy = 6;
+  uint32 active_model_id = 7;
+  uint32 reserved0 = 8;
+  uint64 task_seq = 9;
+  uint64 task_created_ts_ns = 10;
+  uint64 depth_seq = 11;
+  uint64 depth_timestamp_ns = 12;
+  uint64 depth_received_ts_ns = 13;
+  uint64 pose_timestamp_ns = 14;
+  repeated double pose_q_xyzw = 15;
+  repeated double pose_pos_xyz = 16;
+  repeated float pose_vel_xyz = 17;
+  repeated float pose_acc_xyz = 18;
+  uint32 pose_state = 19;
+  bytes reserved1 = 20;
+  float pose_q_sd = 21;
+  float pose_pose_sd = 22;
+  float pose_vel_sd = 23;
+  uint64 wheel_pose_before_timestamp_ns = 24;
+  uint64 wheel_pose_after_timestamp_ns = 25;
+  uint64 control_status_timestamp_ns = 26;
+  uint64 control_status_received_ts_ns = 27;
+  float jump_phase = 28;
+  uint32 reserved2 = 29;
+}

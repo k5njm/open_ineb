@@ -1,0 +1,30 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message ExecutionProfileHandoverStatusData {
+  uint32 schema_version = 1;
+  uint32 state = 2;
+  uint32 stand_bridge_state = 3;
+  uint32 failure_reason = 4;
+  uint32 flags = 5;
+  uint64 request_id = 6;
+  uint64 handover_id = 7;
+  uint64 authority_generation = 8;
+  uint64 manifest_generation = 9;
+  uint64 status_sequence = 10;
+  uint64 status_mono_ns = 11;
+  uint64 transaction_start_mono_ns = 12;
+  uint64 commit_tick = 13;
+  uint64 resume_tick = 14;
+  uint32 active_profile_name_length = 15;
+  bytes active_profile_name = 16;
+  uint32 candidate_profile_name_length = 17;
+  bytes candidate_profile_name = 18;
+  bytes deployment_manifest_hash = 19;
+  float boundary_max_joint_error_rad = 20;
+  float boundary_max_joint_velocity_rad_s = 21;
+  float boundary_yaw_error_rad = 22;
+  float preview_action_linf = 23;
+  float preview_action_delta_linf = 24;
+}

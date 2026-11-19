@@ -1,0 +1,12 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message OtaUpgradeProgressData {
+  uint32 return_code = 1;
+  uint32 upgrade_stage = 2;
+  uint32 progress_percent = 3;
+  uint32 current_bytes = 4;
+  uint32 total_bytes = 5;
+  bytes reserved = 6;
+}

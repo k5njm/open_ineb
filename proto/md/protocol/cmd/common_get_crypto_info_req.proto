@@ -1,0 +1,6 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message CommonGetCryptoInfoReqData {
+}

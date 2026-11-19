@@ -1,0 +1,9 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message TrackingParamUpdateReqData {
+  uint32 param_id = 1;
+  float param_value = 2;
+  bytes reserved = 3;
+}

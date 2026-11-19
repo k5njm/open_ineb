@@ -1,0 +1,8 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message SystemPowerdownAckData {
+  bytes service_name = 1;
+  uint32 status = 2;
+}

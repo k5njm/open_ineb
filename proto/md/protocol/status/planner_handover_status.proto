@@ -1,0 +1,31 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message PlannerHandoverStatusData {
+  uint32 schema_version = 1;
+  uint32 state = 2;
+  uint32 reject_reason = 3;
+  uint32 candidate_representation = 4;
+  uint32 candidate_execution_kind = 5;
+  uint32 candidate_inference_backend = 6;
+  uint64 controller_instance_id = 7;
+  uint64 handover_id = 8;
+  uint64 engagement_id = 9;
+  uint64 authority_generation = 10;
+  uint64 active_planner_epoch_id = 11;
+  uint64 candidate_planner_epoch_id = 12;
+  uint64 candidate_session_id = 13;
+  uint64 status_sequence = 14;
+  uint64 status_mono_ns = 15;
+  uint64 committed_control_tick_sequence = 16;
+  bytes candidate_model_artifact_id = 17;
+  bytes candidate_plugin_config_hash = 18;
+  bytes candidate_motion_contract_id = 19;
+  sint64 candidate_first_frame_index = 20;
+  uint32 candidate_horizon_frames = 21;
+  float boundary_max_joint_error_rad = 22;
+  float boundary_max_joint_velocity_error_rad_s = 23;
+  float boundary_root_position_error_m = 24;
+  float preview_action_linf = 25;
+}

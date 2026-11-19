@@ -1,0 +1,9 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message MotorCtrlData {
+  uint32 cmd1 = 1;
+  uint32 cmd2 = 2;
+  uint32 cmd3 = 3;
+}

@@ -1,0 +1,15 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message CommonHeader {
+  uint32 header_version = 1;
+  uint32 header_flags = 2;
+  uint32 machine_id = 3;
+  uint32 source_id = 4;
+  uint32 target_id = 5;
+  uint32 seq_num = 6;
+  uint32 data_len = 7;
+  uint64 timestamp_mono_ns = 8;
+  uint64 timestamp_realtime_ns = 9;
+  uint64 timestamp_global_ns = 10;
+}

@@ -1,0 +1,11 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message BlackboxRelayFrameData {
+  bytes source_topic = 1;
+  uint32 payload_type = 2;
+  uint32 payload_size = 3;
+  uint32 source_seq = 4;
+  uint64 source_timestamp_ns = 5;
+}

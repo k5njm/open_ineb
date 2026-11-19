@@ -1,0 +1,13 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message MicLinkStatusData {
+  bytes mac = 1;
+  uint32 req_seq = 2;
+  uint32 connected = 3;
+  uint32 codec_ok = 4;
+  uint32 battery_valid = 5;
+  uint32 battery_pct = 6;
+  uint32 fail_reason = 7;
+}

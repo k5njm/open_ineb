@@ -1,0 +1,11 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message CommonGetPartitionSizeRspData {
+  uint32 ret_code = 1;
+  uint32 cmd_version = 2;
+  uint32 part_type = 3;
+  uint32 slot = 4;
+  uint64 size_bytes = 5;
+}

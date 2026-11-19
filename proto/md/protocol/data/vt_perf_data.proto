@@ -1,0 +1,18 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message VtPerfDataData {
+  sint32 ucp_conn = 1;
+  sint32 wifi_conn = 2;
+  sint32 rssi = 3;
+  sint32 resv = 4;
+  uint32 tx_bitrate = 5;
+  uint32 rx_bitrate = 6;
+  uint32 tx_throughput = 7;
+  uint32 rx_throughput = 8;
+  uint32 video_delay = 9;
+  uint32 hb_ps = 10;
+  uint32 fps = 11;
+  uint32 video_trans_mode = 12;
+}

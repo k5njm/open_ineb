@@ -1,0 +1,13 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message ModeControlCmdAckData {
+  uint32 result_code = 1;
+  uint32 current_ctrl_mode = 2;
+  uint32 current_sub_mode = 3;
+  uint32 current_network_mode = 4;
+  sint32 actual_jump_distance = 5;
+  uint32 actual_follow_distance = 6;
+  uint32 status_flags = 7;
+}

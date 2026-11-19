@@ -1,0 +1,15 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message RobotPoseWorldframeData {
+  repeated double q_xyzw = 1;
+  repeated double pos_xyz = 2;
+  repeated float vel_xyz = 3;
+  repeated float acc_xyz = 4;
+  uint32 state = 5;
+  float q_sd = 6;
+  float pose_sd = 7;
+  float vel_sd = 8;
+  uint64 timestamp_ns = 9;
+}

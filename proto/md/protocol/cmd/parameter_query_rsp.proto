@@ -1,0 +1,11 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message ParameterQueryRspData {
+  uint32 mode_type = 1;
+  uint32 param_id = 2;
+  uint32 ret_code = 3;
+  uint32 reserved = 4;
+  float param_value = 5;
+}

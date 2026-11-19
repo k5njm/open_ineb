@@ -1,0 +1,11 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message HmsActionResponseData {
+  uint64 command_id = 1;
+  uint32 action_id = 2;
+  uint32 result_code = 3;
+  uint64 dispatcher_instance_id = 4;
+  bytes delivery_store_id = 5;
+}

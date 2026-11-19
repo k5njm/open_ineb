@@ -1,0 +1,40 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message RxControlBlackboxData {
+  uint64 timestamp_ns = 1;
+  repeated float cmd_position = 2;
+  repeated float cmd_velocity = 3;
+  repeated float cmd_kp = 4;
+  repeated float cmd_kd = 5;
+  repeated float cmd_torque_ff = 6;
+  uint64 cmd_timestamp_us = 7;
+  repeated float policy_target_pos = 8;
+  repeated float policy_target_vel = 9;
+  repeated float fb_position = 10;
+  repeated float fb_velocity = 11;
+  repeated float fb_torque = 12;
+  repeated float fb_ref_torque = 13;
+  repeated sint32 fb_board_temp = 14;
+  repeated uint32 fb_error_code = 15;
+  uint32 motor_error_flags = 16;
+  uint32 mcu_error_flags = 17;
+  uint32 mcu_state = 18;
+  uint32 lifecycle_state = 19;
+  uint64 fb_timestamp_us = 20;
+  uint64 fb_recv_time_ns = 21;
+  repeated float fb_policy_pos = 22;
+  repeated float fb_policy_vel = 23;
+  uint64 imu_timestamp_us = 24;
+  repeated float imu_gyro_raw = 25;
+  repeated float imu_accel_raw = 26;
+  repeated float body_quat_raw = 27;
+  repeated float imu_gyro_body = 28;
+  repeated float imu_accel_body = 29;
+  repeated float body_quat = 30;
+  uint32 imu_health = 31;
+  uint32 imu_failure_mask = 32;
+  uint32 imu_good_streak_lo = 33;
+  float imu_qnorm2 = 34;
+}

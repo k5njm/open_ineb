@@ -1,0 +1,13 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message LogRingDrainData {
+  bytes tag = 1;
+  uint32 include_video = 2;
+  uint32 pre_seconds = 3;
+  uint32 post_seconds = 4;
+  bytes topic_list = 5;
+  uint32 upload_mode = 6;
+  uint64 authorization_started_ns = 7;
+}

@@ -1,0 +1,21 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message GimbalImuDataData {
+  uint64 sensor_timestamp_ns = 1;
+  sint32 acc_x = 2;
+  sint32 acc_y = 3;
+  sint32 acc_z = 4;
+  sint32 gyro_x = 5;
+  sint32 gyro_y = 6;
+  sint32 gyro_z = 7;
+  sint32 gyro_zz = 8;
+  float acc_x_processed = 9;
+  float acc_y_processed = 10;
+  float acc_z_processed = 11;
+  float gyro_x_processed = 12;
+  float gyro_y_processed = 13;
+  float gyro_z_processed = 14;
+  repeated float q_xyzw = 15;
+}

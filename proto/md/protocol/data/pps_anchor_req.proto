@@ -1,0 +1,12 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message PpsAnchorReqData {
+  uint32 version = 1;
+  uint32 client_generation = 2;
+  uint64 client_boot_id = 3;
+  uint64 txn_id = 4;
+  uint32 a0_seq = 5;
+  uint32 reserved = 6;
+}

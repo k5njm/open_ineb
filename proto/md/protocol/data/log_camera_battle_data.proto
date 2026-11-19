@@ -1,0 +1,30 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message LogCameraBattleDataData {
+  uint64 timestamp_ns = 1;
+  float distance_m = 2;
+  float aim_yaw_deg = 3;
+  float incidence_deg_raw = 4;
+  float incidence_deg_filtered = 5;
+  float reproj_error_px = 6;
+  float progress_s = 7;
+  float progress_ratio = 8;
+  float lock_freq_hz = 9;
+  float lock_interval_ms = 10;
+  float lock_volume = 11;
+  uint32 pose_age_ms = 12;
+  uint32 dt_ms = 13;
+  uint32 frames_received = 14;
+  uint32 replaced_unprocessed = 15;
+  uint32 reads_stale = 16;
+  uint32 marker_id = 17;
+  uint32 detection_valid = 18;
+  uint32 gate_bits = 19;
+  uint32 gate_first_broken = 20;
+  uint32 hits = 21;
+  uint32 sub_state = 22;
+  float heading_deg_raw = 23;
+  float heading_deg_filtered = 24;
+}

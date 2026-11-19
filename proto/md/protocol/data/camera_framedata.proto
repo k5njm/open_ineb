@@ -1,0 +1,20 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message CameraFramedataData {
+  uint32 version = 1;
+  uint32 type = 2;
+  uint32 sensor_idx = 3;
+  uint32 stream_idx = 4;
+  uint32 seq = 5;
+  uint64 pts = 6;
+  uint32 plant_num = 7;
+  repeated uint64 size = 8;
+  repeated uint64 phys_addr = 9;
+  uint64 msg_ts_ns = 10;
+  uint32 camera_delay_us = 11;
+  uint32 width = 12;
+  uint32 height = 13;
+  repeated float tracking_data = 14;
+}

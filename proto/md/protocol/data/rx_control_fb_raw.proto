@@ -1,0 +1,22 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message RxControlFbRawData {
+  uint64 timestamp_ns = 1;
+  uint64 cycle = 2;
+  uint64 ts_us = 3;
+  repeated sint32 pos_i16 = 4;
+  repeated sint32 vel_i16 = 5;
+  repeated sint32 trq_i16 = 6;
+  repeated sint32 ref_trq_i16 = 7;
+  repeated sint32 board_temp = 8;
+  repeated uint32 err_code = 9;
+  repeated float pos_f = 10;
+  repeated float gyro = 11;
+  repeated float accel = 12;
+  repeated float quat = 13;
+  uint32 motor_err = 14;
+  uint32 mcu_err = 15;
+  uint32 mcu_state = 16;
+}

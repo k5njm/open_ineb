@@ -1,0 +1,10 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message PnlModeCtrlRspData {
+  uint32 result_code = 1;
+  uint32 previous_pnl_mode = 2;
+  uint32 current_pnl_mode = 3;
+  uint32 reserved = 4;
+}

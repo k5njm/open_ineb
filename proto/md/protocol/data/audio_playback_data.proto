@@ -1,0 +1,14 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message AudioPlaybackDataData {
+  uint32 encoding_type = 1;
+  uint32 sample_rate = 2;
+  uint32 channels = 3;
+  uint32 frame_duration_ms = 4;
+  uint32 timestamp = 5;
+  uint32 seq_num_audio = 6;
+  uint32 data_size = 7;
+  bytes data = 8;
+}

@@ -1,0 +1,44 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message FunctionCollisionEventData {
+  bytes event_id = 1;
+  uint64 event_raw_ns = 2;
+  uint64 detector_tick_raw_ns = 3;
+  uint64 source_frozen_raw_ns = 4;
+  uint64 utc_ms = 5;
+  uint32 collision_count = 6;
+  uint32 collision_event_raw = 9;
+  uint32 is_severe = 10;
+  uint32 scheduler_len = 11;
+  bytes scheduler_data = 12;
+  uint32 leaf_mode = 13;
+  uint32 nav_level = 14;
+  uint32 nav_status = 15;
+  uint32 oa_reason_mask = 16;
+  uint32 oa_hard_fault_kind = 17;
+  uint32 oa_hard_fault_detail = 18;
+  float velocity_x = 19;
+  float pitch = 20;
+  float roll = 21;
+  float height = 22;
+  uint32 ctrl_cmd_len = 23;
+  bytes ctrl_cmd_data = 24;
+  uint32 command_status = 25;
+  uint32 last_attempt_result = 26;
+  uint32 perception_available = 27;
+  float env_lux = 28;
+  uint32 perception_reason_mask = 29;
+  uint32 quality_mask = 30;
+  uint64 scheduler_raw_ns = 31;
+  uint64 nav_confirmed_raw_ns = 32;
+  uint64 command_published_raw_ns = 33;
+  uint64 control_received_raw_ns = 34;
+  uint64 body_imu_raw_ns = 35;
+  float yaw_rate = 37;
+  uint32 active_model_id = 38;
+  uint32 effective_nav_level = 39;
+  uint32 oa_requested = 40;
+  uint32 oa_effective = 41;
+}

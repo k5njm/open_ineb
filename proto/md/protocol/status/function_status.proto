@@ -1,0 +1,13 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message FunctionStatusData {
+  uint32 ctrl_mode = 1;
+  uint32 sub_mode = 2;
+  uint32 is_locked = 3;
+  uint32 is_paused = 4;
+  sint32 cinematography_progress = 5;
+  uint32 speed_gear = 6;
+  uint32 operation_flags = 7;
+}

@@ -1,0 +1,11 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message PncImuData {
+  uint32 state = 1;
+  repeated float accel = 2;
+  repeated float gyro = 3;
+  repeated float q_wxyz = 4;
+  repeated float grav = 5;
+  repeated float euler = 6;
+}

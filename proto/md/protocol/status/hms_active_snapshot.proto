@@ -1,0 +1,19 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message HmsActiveSnapshotData {
+  uint64 at_offset = 1;
+  uint32 count = 2;
+  repeated uint32 module_ids = 3;
+  repeated uint32 fault_codes = 4;
+  repeated uint32 instance_ids = 5;
+  repeated uint32 severities = 6;
+  repeated uint64 first_assert_ts = 7;
+  repeated uint64 last_update_ts = 8;
+  uint64 daemon_instance_id = 9;
+  uint64 state_revision = 10;
+  uint32 recovery_state = 11;
+  uint32 ret_code = 12;
+  uint64 request_id = 13;
+}

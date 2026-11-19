@@ -1,0 +1,11 @@
+syntax = "proto3";
+package md.protocol.common;
+
+message TargetPoseFields {
+  repeated double pos_xyz = 1;
+  repeated float vel_xyz = 2;
+  uint32 state = 3;
+  float pose_sd = 4;
+  float vel_sd = 5;
+  uint32 target_source = 6;
+}

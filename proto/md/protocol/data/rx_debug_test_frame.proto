@@ -1,0 +1,16 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message RxDebugTestFrameData {
+  bytes test_id = 1;
+  uint32 frame_id = 2;
+  uint32 ui_seq_echo = 3;
+  uint32 phase = 4;
+  float elapsed_s = 5;
+  uint32 channel_count = 6;
+  bytes channel_name = 7;
+  repeated float channel_value = 8;
+  uint32 loss_count_in_frame_queue = 9;
+  uint64 timestamp_ns = 10;
+}

@@ -1,0 +1,16 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message ArucoMarkerPoseData {
+  uint32 marker_id = 1;
+  uint64 timestamp_ns = 2;
+  repeated float pos_gimbal_xyz = 3;
+  repeated float pos_body_xyz = 4;
+  float yaw_deg = 5;
+  float pitch_deg = 6;
+  float plane_x_yaw_deg = 7;
+  float body_yaw_deg = 8;
+  float gimbal_body_relative_yaw_deg = 9;
+  uint32 detection_valid = 10;
+}

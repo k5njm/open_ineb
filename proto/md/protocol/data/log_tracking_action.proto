@@ -1,0 +1,46 @@
+syntax = "proto3";
+package md.protocol.data;
+import "md/protocol/common/wire_header.proto";
+
+message LogTrackingActionData {
+  uint64 timestamp_ns = 1;
+  uint64 utc_timestamp_ns = 2;
+  float action_vel_x = 3;
+  float action_omega_z = 4;
+  float action_pitch = 5;
+  float action_roll = 6;
+  float action_height = 7;
+  float action_delta_ref_angle = 8;
+  float active_reference_angle = 9;
+  float infer_time_ms = 10;
+  double target_body_pos_x = 11;
+  double target_body_pos_y = 12;
+  double target_body_pos_z = 13;
+  float target_body_vel_x = 14;
+  float target_body_vel_y = 15;
+  float target_body_vel_z = 16;
+  double target_world_pos_x = 17;
+  double target_world_pos_y = 18;
+  double target_world_pos_z = 19;
+  float target_world_vel_x = 20;
+  float target_world_vel_y = 21;
+  float target_world_vel_z = 22;
+  double robot_world_pos_x = 23;
+  double robot_world_pos_y = 24;
+  double robot_world_pos_z = 25;
+  float robot_world_vel_x = 26;
+  float robot_world_vel_y = 27;
+  float robot_world_vel_z = 28;
+  float robot_yaw = 29;
+  double robot_q_x = 30;
+  double robot_q_y = 31;
+  double robot_q_z = 32;
+  double robot_q_w = 33;
+  float imu_euler_roll = 34;
+  float imu_euler_pitch = 35;
+  float imu_euler_yaw = 36;
+  double obs_target_world_pos_x = 37;
+  double obs_target_world_pos_y = 38;
+  uint32 target_valid = 39;
+  uint32 robot_pose_valid = 40;
+}

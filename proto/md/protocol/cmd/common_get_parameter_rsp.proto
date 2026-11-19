@@ -1,0 +1,12 @@
+syntax = "proto3";
+package md.protocol.cmd;
+import "md/protocol/common/wire_header.proto";
+
+message CommonGetParameterRspData {
+  uint32 return_code = 1;
+  uint32 category = 2;
+  uint32 parameter_id = 3;
+  uint32 type = 4;
+  uint32 len = 5;
+  bytes value = 6;
+}

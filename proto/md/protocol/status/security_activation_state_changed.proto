@@ -1,0 +1,9 @@
+syntax = "proto3";
+package md.protocol.status;
+import "md/protocol/common/wire_header.proto";
+
+message SecurityActivationStateChangedData {
+  uint32 state = 1;
+  bytes request_id = 2;
+  uint64 state_changed_at = 3;
+}
