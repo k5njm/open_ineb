@@ -4,6 +4,11 @@ Community reverse-engineering research and open-source companion tooling for the
 
 > **Disclaimer:** This repository is an independent, unofficial interoperability and research project by hardware owners. It does not distribute proprietary firmware, APKs, or copyrighted manuals.
 
+> **⚠️ Caution Before Accepting Official OTA Updates:**
+> As of `V26.10.28.04` and `V26.11.19.01`, `md_upgrade` does not yet enforce RSA package signatures, and `vbmeta.img` (AVB 1.0) only covers `boot` and `system` (not `mondo.img`). Future official OTA updates from Mondo Robotics **could** close these doors—for example, by enabling RSA signature verification in `md_upgrade`, extending verified boot / integrity checks to `mondo.img`, locking down the local HTTP/Zenoh OTA endpoints, or removing debug/autostart hooks (`authorized_debug_profile` / `md_app_autostart.conf`).
+>
+> If you want to keep your Beni customizable, **think twice before accepting automatic OTA updates**, archive a backup of your current firmware first (`tools/fetch_ota.py`), and inspect new releases before flashing them. Also note that `customize_fw.py` has been verified offline and via loopback tests, and has not yet been tested on live hardware—use at your own risk!
+
 ## Goals
 
 1. Document Beni's local communication protocols (BLE provisioning, local Wi-Fi HTTP APIs, UCP transport, and Zenoh-over-UCP Protobuf topics).
