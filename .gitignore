@@ -1,0 +1,15 @@
+# Build / local artifacts
+*.apk
+*.pdf
+*.bin
+*.fw
+*.img
+*.ota
+*.tar.gz
+*.zip
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+work/
