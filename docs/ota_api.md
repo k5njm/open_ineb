@@ -14,15 +14,23 @@ Recovered from `libapp.so` (Dart 3.11.5 AOT snapshot, `com.mondorobotics.mondo.a
 
 ## 1. Account Authentication Endpoints
 
-- `GET /account/v1/rsa/pub-key` — RSA public key for password encryption
-- `POST /account/v1/login` (and `/account/v1/login/refresh`, `/account/v1/verify/email/code/send`, `/account/v1/verify/email/code/verify`)
+1. `GET /account/v1/rsa/pub-key` — Returns PEM RSA public key (`data.public_key`).
+2. `POST /account/v1/verify/pwd` — Body: `{"account", "password", "region", "scene": "login"}` where `password` is Base64-encoded **RSA-OAEP (SHA-256 + MGF1-SHA256)**. Returns `data.flow_token`.
+3. `POST /account/v1/login` — Body: `{"flow_token"}`. Returns `data.access_token`, `data.refresh_token`, `data.expires_in`, `data.uuid`.
 
 ---
 
 ## 2. Query Latest Firmware Package
 
 **Endpoint:** `POST /app/v1/files/package/latest`  
-*(Related: `/app/v1/files/package/list`)*
+*(Related: `POST /app/v1/files/package/list` — passing empty strings for `board_id`, `batch_id`, and `mondo_partition_size` lists all visible packages)*
+
+### Observed Hardware Profiles
+
+| `product_code` | `board_id` | `batch_id` | `mondo_partition_size` | Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| `lz110` | `0x3001` | `lz100-PRE-20260601-001` | `1GB` | Production Beni firmware (e.g. `V26.11.19.01`, 11 modules, ~1 GB) |
+| `sisyphus` | `0x2005` | `unsigned` | `1GB` | Earlier dev/mass `plain.unsign.zip` builds (6 modules, ~773 MB) |
 
 ### Request (`GetLatestPackageReq`)
 
@@ -59,10 +67,11 @@ Data fields:
 **Endpoint:** `POST /app/v1/files/getDownloadUrl`
 
 ### Request
-- `sub_path`: The `oss_path` string returned by `/app/v1/files/package/latest`.
+- `type` (integer): `1` = firmware packages (`mondo-package-manager`), `3` = `device-data/prod`, `4` = `hms` catalogs.
+- `sub_path` (string): The `oss_path` string returned by `/app/v1/files/package/latest` or `/list`.
 
 ### Response (`GetDownloadUrlResp` → `DownloadUrlData`)
-- `download_url` — Presigned Alibaba Cloud OSS URL (`x-oss-signature`, `x-oss-security-token`, `x-oss-expires`)
+- `download_url` — Presigned AWS S3 (`us-west-1`) or Alibaba Cloud OSS URL
 - `method` — HTTP method (e.g. `GET`)
 - `expiration` — URL expiration timestamp
 - `signed_headers` — Required signed HTTP headers for OSS request

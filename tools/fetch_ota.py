@@ -121,8 +121,8 @@ class MondoClient:
 
     def get_latest_package(
         self,
-        board_id: str = "0x2005",
-        batch_id: str = "unsigned",
+        board_id: str = "0x3001",
+        batch_id: str = "lz100-PRE-20260601-001",
         mondo_partition_size: str = "1GB",
         product_code: str | None = None,
         device_sn: str | None = None,
@@ -148,9 +148,9 @@ class MondoClient:
 
     def list_packages(
         self,
-        board_id: str = "0x2005",
-        batch_id: str = "unsigned",
-        mondo_partition_size: str = "1GB",
+        board_id: str = "",
+        batch_id: str = "",
+        mondo_partition_size: str = "",
         page: int = 1,
         page_size: int = 20,
     ) -> dict[str, Any]:
@@ -163,7 +163,7 @@ class MondoClient:
         }
         return self._request("POST", "/app/v1/files/package/list", body)
 
-    def get_download_url(self, sub_path: str, file_type: str = "firmware") -> dict[str, Any]:
+    def get_download_url(self, sub_path: str, file_type: int = 1) -> dict[str, Any]:
         return self._request(
             "POST",
             "/app/v1/files/getDownloadUrl",
@@ -226,8 +226,8 @@ def main() -> int:
     p_login.add_argument("--region", default="US", help="Region code (e.g. US, CN, EU)")
 
     p_latest = sub.add_parser("latest", help="Query latest firmware package metadata")
-    p_latest.add_argument("--board-id", default="0x2005")
-    p_latest.add_argument("--batch-id", default="unsigned")
+    p_latest.add_argument("--board-id", default="0x3001")
+    p_latest.add_argument("--batch-id", default="lz100-PRE-20260601-001")
     p_latest.add_argument("--partition-size", default="1GB")
     p_latest.add_argument("--product-code", default=None)
     p_latest.add_argument("--device-sn", default=None)
@@ -235,17 +235,17 @@ def main() -> int:
     p_latest.add_argument("--package-type", default=None)
 
     p_list = sub.add_parser("list", help="List available firmware packages")
-    p_list.add_argument("--board-id", default="0x2005")
-    p_list.add_argument("--batch-id", default="unsigned")
-    p_list.add_argument("--partition-size", default="1GB")
+    p_list.add_argument("--board-id", default="")
+    p_list.add_argument("--batch-id", default="")
+    p_list.add_argument("--partition-size", default="")
     p_list.add_argument("--page", type=int, default=1)
     p_list.add_argument("--page-size", type=int, default=20)
 
     p_dl = sub.add_parser("download", help="Resolve presigned URL and download firmware package")
-    p_dl.add_argument("--sub-path", default=None, help="OSS path (if omitted, queries `latest` first)")
-    p_dl.add_argument("--type", dest="file_type", default="firmware", help="File type for getDownloadUrl (default: firmware)")
-    p_dl.add_argument("--board-id", default="0x2005")
-    p_dl.add_argument("--batch-id", default="unsigned")
+    p_dl.add_argument("--sub-path", default=None, help="OSS/S3 path (if omitted, queries `latest` first)")
+    p_dl.add_argument("--type", dest="file_type", type=int, default=1, help="Integer download type (1=firmware, 3=device-data, 4=hms)")
+    p_dl.add_argument("--board-id", default="0x3001")
+    p_dl.add_argument("--batch-id", default="lz100-PRE-20260601-001")
     p_dl.add_argument("--partition-size", default="1GB")
     p_dl.add_argument("--product-code", default=None)
     p_dl.add_argument("--device-sn", default=None)
