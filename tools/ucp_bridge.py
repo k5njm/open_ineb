@@ -97,12 +97,16 @@ class UcpEndpoint:
         role: str = "client",
         on_dds: Callable[[bytes], None] | None = None,
         on_hb: Callable[[bytes], None] | None = None,
+        on_video: Callable[[bytes], None] | None = None,
+        on_audio: Callable[[bytes], None] | None = None,
     ) -> None:
         self.host = host
         self.port = port
         self.role = role
         self.on_dds = on_dds
         self.on_hb = on_hb
+        self.on_video = on_video
+        self.on_audio = on_audio
 
         self._sock: socket.socket | None = None
         self._peer_addr: tuple[str, int] | None = None
@@ -112,12 +116,32 @@ class UcpEndpoint:
         self._lock = threading.Lock()
         self._snd_nxt = 0
         self._rcv_nxt = 0
-        # sn -> (wire_bytes_without_una_ts, first_sent_time, last_sent_time, flags, payload)
+        self._video_sn = 0
+        self._video_reasm = bytearray()
+        # sn -> (flags, payload, first_sent_time, last_sent_time)
         self._snd_buf: dict[int, tuple[int, bytes, float, float]] = {}
-        self._rcv_buf: dict[int, tuple[int, bytes]] = {}
+        self._rcv_buf: dict[int, tuple[int, bytes, bool]] = {}
+
+        # Link telemetry stats
+        self._stats = {
+            "rx_video_frames": 0,
+            "rx_video_bytes": 0,
+            "rx_audio_pkts": 0,
+            "rx_dds_bytes": 0,
+            "tx_dds_bytes": 0,
+            "rtt_ms": 0.0,
+            "last_rx_ts": 0.0,
+        }
+        self._last_hb_tx_ts = 0.0
 
         self._rx_thread: threading.Thread | None = None
         self._tx_thread: threading.Thread | None = None
+
+    def get_stats(self) -> dict[str, float | int | bool]:
+        with self._lock:
+            out: dict[str, float | int | bool] = dict(self._stats)
+            out["connected"] = self._connected
+            return out
 
     @property
     def connected(self) -> bool:
@@ -209,6 +233,7 @@ class UcpEndpoint:
         base_flags = UCP_BASE_VER_MAGIC | (UCP_CHAN_DDS << 10) | UCP_FLAG_CONFIRM
         now = time.monotonic()
         with self._lock:
+            self._stats["tx_dds_bytes"] += len(data)
             for idx, chunk in enumerate(chunks):
                 flags = base_flags | (UCP_FLAG_MORE_FRAG if idx < len(chunks) - 1 else 0)
                 sn = self._snd_nxt
@@ -220,10 +245,40 @@ class UcpEndpoint:
                 except OSError as exc:
                     log.debug("ucp send_dds error: %s", exc)
 
+    def send_video(self, frame_bytes: bytes) -> None:
+        """Send an Annex-B video frame on UCP channel 1 (unreliable, MTU-fragmented)."""
+        if not frame_bytes:
+            return
+        chunks = [frame_bytes[i : i + UCP_MTU] for i in range(0, len(frame_bytes), UCP_MTU)]
+        base_flags = UCP_BASE_VER_MAGIC | (UCP_CHAN_VIDEO << 10)
+        with self._lock:
+            for idx, chunk in enumerate(chunks):
+                flags = base_flags | (UCP_FLAG_MORE_FRAG if idx < len(chunks) - 1 else 0)
+                sn = self._video_sn
+                self._video_sn = (self._video_sn + 1) & 0xFFFF
+                pkt = self._build_pkt(flags, sn, chunk)
+                try:
+                    self._raw_send(pkt)
+                except OSError as exc:
+                    log.debug("ucp send_video error: %s", exc)
+
+    def send_audio(self, payload: bytes) -> None:
+        """Send an audio packet (Opus/PCM) on UCP channel 2."""
+        if not payload:
+            return
+        flags = UCP_BASE_VER_MAGIC | (UCP_CHAN_AUDIO << 10)
+        with self._lock:
+            pkt = self._build_pkt(flags, 0, payload)
+            try:
+                self._raw_send(pkt)
+            except OSError as exc:
+                log.debug("ucp send_audio error: %s", exc)
+
     def send_hb(self, payload: bytes = b"\x00") -> None:
         """Send a UCP heartbeat packet carrying optional payload + 11-byte BAK trailer."""
         flags = UCP_BASE_VER_MAGIC | UCP_FLAG_HB
         with self._lock:
+            self._last_hb_tx_ts = time.monotonic()
             pkt = self._build_pkt(flags, 0, payload, append_bak=True)
             try:
                 self._raw_send(pkt)
@@ -285,10 +340,13 @@ class UcpEndpoint:
     def _handle_datagram(self, data: bytes) -> None:
         pos = 0
         end = len(data)
-        deliveries: list[tuple[int, bytes, bool]] = []
+        # (chan, payload, is_hb, more_frag)
+        deliveries: list[tuple[int, bytes, bool, bool]] = []
         need_ack = False
+        now = time.monotonic()
 
         with self._lock:
+            self._stats["last_rx_ts"] = now
             while pos + UCP_HDR_LEN <= end:
                 flags, una, sn, pkt_len, _ts = struct.unpack_from("<HHHHI", data, pos)
                 if pkt_len < UCP_HDR_LEN or pos + pkt_len > end:
@@ -296,13 +354,20 @@ class UcpEndpoint:
                 if (flags & 0xFF) != UCP_BASE_VER_MAGIC:
                     break
 
-                # Process cumulative ACK (`una`)
+                # Process cumulative ACK (`una`) & estimate RTT from ACK'd packet
                 for s in list(self._snd_buf.keys()):
                     if _u16_diff(s, una) < 0:
-                        del self._snd_buf[s]
+                        _f, _p, first_ts, _last_ts = self._snd_buf.pop(s)
+                        sample_rtt = (now - first_ts) * 1000.0
+                        if 0.0 < sample_rtt < 5000.0:
+                            prev = self._stats["rtt_ms"]
+                            self._stats["rtt_ms"] = (
+                                sample_rtt if prev == 0.0 else (prev * 0.8 + sample_rtt * 0.2)
+                            )
 
                 is_hb = bool(flags & UCP_FLAG_HB)
                 is_confirm = bool(flags & UCP_FLAG_CONFIRM)
+                more_frag = bool(flags & UCP_FLAG_MORE_FRAG)
                 chan = (flags >> 10) & 0x03
 
                 if is_hb:
@@ -318,34 +383,54 @@ class UcpEndpoint:
                                     self._snd_buf.pop((bak_una + 33 + bit) & 0xFFFF, None)
                         payload = data[pos + UCP_HDR_LEN : bak_off]
                         if payload:
-                            deliveries.append((chan, payload, True))
+                            deliveries.append((chan, payload, True, False))
                 elif is_confirm:
                     payload = data[pos + UCP_HDR_LEN : pos + pkt_len]
                     diff = _u16_diff(sn, self._rcv_nxt)
                     if diff >= 0 and sn not in self._rcv_buf:
-                        self._rcv_buf[sn] = (chan, payload)
+                        self._rcv_buf[sn] = (chan, payload, more_frag)
                     need_ack = True
                 else:
                     payload = data[pos + UCP_HDR_LEN : pos + pkt_len]
-                    deliveries.append((chan, payload, False))
+                    deliveries.append((chan, payload, False, more_frag))
 
                 pos += pkt_len
 
             # Drain in-order reliable packets
             while self._rcv_nxt in self._rcv_buf:
-                chan, payload = self._rcv_buf.pop(self._rcv_nxt)
+                chan, payload, more_frag = self._rcv_buf.pop(self._rcv_nxt)
                 self._rcv_nxt = (self._rcv_nxt + 1) & 0xFFFF
-                deliveries.append((chan, payload, False))
+                deliveries.append((chan, payload, False, more_frag))
 
         # Immediately piggyback an ACK/BAK if we received reliable data
         if need_ack:
             self.send_hb(b"\x00")
 
-        for chan, payload, is_hb in deliveries:
+        for chan, payload, is_hb, more_frag in deliveries:
             if is_hb:
                 if self.on_hb is not None:
                     self.on_hb(payload)
+            elif chan == UCP_CHAN_VIDEO:
+                if len(self._video_reasm) + len(payload) > 2 * 1024 * 1024:
+                    self._video_reasm.clear()
+                    continue
+                self._video_reasm.extend(payload)
+                if not more_frag:
+                    frame = bytes(self._video_reasm)
+                    self._video_reasm.clear()
+                    with self._lock:
+                        self._stats["rx_video_frames"] += 1
+                        self._stats["rx_video_bytes"] += len(frame)
+                    if self.on_video is not None:
+                        self.on_video(frame)
+            elif chan == UCP_CHAN_AUDIO:
+                with self._lock:
+                    self._stats["rx_audio_pkts"] += 1
+                if self.on_audio is not None:
+                    self.on_audio(payload)
             elif chan == UCP_CHAN_DDS:
+                with self._lock:
+                    self._stats["rx_dds_bytes"] += len(payload)
                 if self.on_dds is not None:
                     self.on_dds(payload)
 
@@ -412,6 +497,8 @@ class ZenohOverUcpBridge:
         role: str = "client",
         session_id: int = 1,
         target_tcp_port: int | None = None,
+        on_video: Callable[[bytes], None] | None = None,
+        on_audio: Callable[[bytes], None] | None = None,
     ) -> None:
         self.role = role
         self.session_id = session_id
@@ -425,6 +512,8 @@ class ZenohOverUcpBridge:
             role=role,
             on_dds=self._dds_parser.feed,
             on_hb=self._hb_parser.feed,
+            on_video=on_video,
+            on_audio=on_audio,
         )
 
         self._tcp_srv: socket.socket | None = None

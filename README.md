@@ -26,6 +26,7 @@ Community reverse-engineering research and open-source companion tooling for the
 - [UCP + Zenoh-over-UCP & Local OTA Protocol](docs/ucp_zenoh_protocol.md) — Complete byte-level specification of UCP over UDP (`:9007`), `mdZenohOverUcp` (`0xa4`–`0xa7`), Zenoh 1.x Protobuf OTA control, and TUS 1.0.0 resumable upload (`:8080`).
 - [Firmware OTA API Specification](docs/ota_api.md) — Cloud OTA API endpoints and JSON schemas recovered from `libapp.so`.
 - [Firmware OTA Archiver (`tools/fetch_ota.py`)](tools/fetch_ota.py) — Standalone `uv`-runnable CLI to log in with your own Mondo account, query firmware metadata, and archive a verified local backup copy of official firmware packages.
+- [Native Steam Deck FPV Controller (`deck_controller/`)](docs/steam_deck_controller.md) — Zero-compile 1280×800 Steam Deck / macOS FPV HUD (`pygame-ce` + PyAV + `eclipse-zenoh`) with live H.265/H.264 video, gamepad + back-paddle controls, **Beni Voice (offline TTS + Steam Deck On-Screen Keyboard)**, local `:8084` media gallery, and a built-in `--mock` Beni simulator.
 - [Custom Firmware TUI Builder & Standalone OTA Uploader (`tools/customize_fw.py`)](tools/customize_fw.py) — Interactive TUI (`rich` + `questionary`) to build a brick-resistant, `mondo.img`-only A/B OTA package (optional root password, SSH authorized key, generated Beni Ed25519 host/client keys, USB-C ADB unlock) and upload/install it **100% standalone** over UCP + Zenoh + TUS 1.0.0 without the official Mondo app.
 
 ## Status

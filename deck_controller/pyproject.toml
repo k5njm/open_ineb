@@ -1,0 +1,12 @@
+[project]
+name = "open-ineb-deck"
+version = "0.1.0"
+description = "Native Steam Deck (1280x800) FPV controller, HUD, TTS voice, and media gallery for Mondo Robotics Beni"
+requires-python = ">=3.10"
+dependencies = [
+    "pygame-ce>=2.5.0",
+    "av>=13.0.0",
+    "eclipse-zenoh>=1.0.0",
+    "requests>=2.32.0",
+    "numpy>=1.26.0",
+]

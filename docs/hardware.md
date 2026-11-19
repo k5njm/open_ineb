@@ -55,7 +55,7 @@ Community hardware reference compiled from official firmware analysis (`V26.10.2
 - **Wi-Fi:** Dual-mode AP (`192.168.7.1`, `dnsmasq`) and Station mode.
 - **BLE:** Provisioning & status GATT service (`0000FFF0..FFF3`, `0100FFF0..FFF3`).
 - **UWB:** Ultra-wideband localization paired with the Motion Tracker remote (`uwb_robot.bin`, `md_uwb_loc_config.json`).
-- **Audio:** Speaker + microphone array (BlueALSA / `md_audio` pipeline).
+- **Audio:** 6-channel mic array + 1 W 8 Ω MD20N speaker driven by an **Awinic AW88166** smart PA (`i2c-1` `0x35`, ALSA `hw:1,1`), 48 kHz 20 ms Opus intercom pipeline (`md_audio`).
 
 ---
 
