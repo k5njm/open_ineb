@@ -61,7 +61,12 @@ Inspecting `/md/bin/md_upgrade` (Rust binary) in **both `V26.10.28.04` and `V26.
 Instead of building a full custom OS on day one, make the **smallest possible, reversible modification** to `mondo.img`:
 1. Start from the exact stock `mondo.img` matching your robot's current version (or `V26.10.28.04` / `V26.11.19.01`).
 2. Inside `mondo.img`:
-   - **Remove `/etc/authorized_debug_profile`** (causes `S50sshd` to start `sshd` on port 22 and `S99md_adb_guard.sh` to enable USB-C ADB `0x3a29:0x0010` automatically at boot!).
+   - **Remove `/etc/authorized_debug_profile`** — unlocks USB-C ADB (`VID=0x3a29, PID=0x0010`, root `adb shell` with no password required) and allows `S50sshd` to start.
+   - **Add key-only SSH using your own public key** (since `/etc/shadow` in read-only `system.img` has a hashed `root` password and no `/root/.ssh/authorized_keys`): place your public key at `/md/etc/user_authorized_keys` and add a lightweight autostart entry in `/md/bin/` (started by `mdctl.sh`) that runs:
+     ```sh
+     /usr/sbin/sshd -p 2222 -o AuthorizedKeysFile=/md/etc/user_authorized_keys -o PasswordAuthentication=no -o PermitRootLogin=prohibit-password
+     ```
+     This gives passwordless, key-authenticated root SSH over both Wi-Fi (`192.168.7.1:2222`) and USB-C RNDIS (`192.168.123.1:2222`) without modifying `system.img`.
    - **Leave every other daemon—especially `md_upgrade` and `md_netmanager`—100% untouched** so OTA recovery and Wi-Fi AP stay fully functional.
 3. Package a **minimal `0300` (`X5`) OTA ZIP** whose `data.json` sets:
    - `"update_partition": ["mondo"]` (ONLY `mondo` — do NOT include `miniboot`, `uboot`, `vbmeta`, `boot`, `system`, or any MCU modules!).
