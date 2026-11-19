@@ -45,8 +45,10 @@ Community hardware reference compiled from official firmware analysis (`V26.10.2
 | **Battery BMS (`NB401`)** | `0x0A00` | UART→I2C `0x16` via `/dev/ttyS6` | STM32 (`0x08000000`), 4S smart battery |
 | **USB-C PD Charger Controller** | `0x0504` | I2C/PMU | **Injoinic IP2369** 4S 45 W USB-C PD controller |
 | **Charging Hub MCU** | `0x0500` | External / Dock | ARM Cortex-M charging hub controller |
-| **Motion Tracker RC (×4)** | `0x0701..0x0732` | UART `/dev/ttyS7` (`921600`) | UWB tracker (`07x1`) + STM32 button MCU (`07x2`) |
-| **Wireless Dongle** | `0x0800` | External | Companion wireless dongle (85 MB firmware) |
+| **Motion Tracker RC (×4)** | `0x0701..0x0732` | UWB, relayed via Beni's UWB module on UART `/dev/ttyS7` (`921600`) | MKSemi UWB SoC (`07x1`) + small Cortex-M0 helper MCU (`07x2`); see [§4.1](#41-motion-tracker-uwb-link) |
+| **Robot UWB Module** | — | UART `/dev/ttyS7` (`115200` link test) | MKSemi UWB SoC running `/md/etc/uwb_robot.bin`; reset via GPIO `422` |
+| **UWB Treat Launcher** | `0x0900` | UWB (paired accessory) | MKSemi UWB SoC (`UWB Treat Launcher run!`); first shipped in `V26.11.19.01` |
+| **"Wireless Dongle" (LTE Modem)** | `0x0800` | External | **SIMCom SIM7600G-M11** global LTE modem firmware (RAR5 of `LE20B01V07SIM7600G-M11_OTA_CUS_MDJQR/`, 85 MB) |
 
 ---
 
@@ -56,6 +58,42 @@ Community hardware reference compiled from official firmware analysis (`V26.10.2
 - **BLE:** Provisioning & status GATT service (`0000FFF0..FFF3`, `0100FFF0..FFF3`).
 - **UWB:** Ultra-wideband localization paired with the Motion Tracker remote (`uwb_robot.bin`, `md_uwb_loc_config.json`).
 - **Audio:** 6-channel mic array + 1 W 8 Ω MD20N speaker driven by an **Awinic AW88166** smart PA (`i2c-1` `0x35`, ALSA `hw:1,1`), 48 kHz 20 ms Opus intercom pipeline (`md_audio`).
+- **LTE:** SIMCom SIM7600G-M11 modem firmware ships as module `0x0800`. It's unconfirmed whether the modem is internal or an optional accessory.
+
+### 4.1 Motion Tracker UWB Link
+
+The Motion Tracker talks to Beni **only over UWB, directly**. Neither the phone nor BLE is in the path. Both tracker images (`07x1`, `07x2`, release and `sisyphus` debug builds) contain no BLE/HCI/GATT strings.
+
+```
+buttons/power/vibration ─ M0 MCU (07x2) ─UART─┐
+joystick (ADC) ───────────────────────────────┤
+IMU (SPI) ────────────────────────────────────┤
+                                     MKSemi UWB SoC (07x1)
+                                              │  UWB: ranging + PDoA AoA + data frames
+                                     Beni UWB module (uwb_robot.bin)
+                                              │  UART /dev/ttyS7
+                                     X5: md_uwb_loc, md_pose_estimate, md_* services
+```
+
+- **Tracker UWB SoC (`07x1`):** MKSemi SDK (`components/kernel/src/mk_*.c`, `drivers/mk_uart.c`).
+  - Reads the joystick through its ADC (`[JOYSTICK] X=%lumV Y=%lumV`).
+  - Owns the IMU over SPI (`IMU WHO_AM_I read failed`, `[IMU-Euler] Roll/Pitch/Yaw`).
+  - Measures range and angle (`Peer %x, Distance %dcm, AoA Azimuth %d Elevation %d`).
+  - Carries command frames (`RECV uwb V0 pkt cmd:%02X`, `UWB recv V1 ... cmd=%02X.%02X`).
+  - Stores the paired robot in NVM and receives DFU over UWB (`[OTA] DFU_ENTER`).
+  - Bridges to the helper MCU over UART (`UART bridge mode ON (UART0`).
+- **Helper MCU (`07x2`):** stripped Cortex-M0-class image (~15 KB) with initial SP `0x20000C00` (~3 KB SRAM, flash at `0x08000000`). Too small for a radio stack. It probably handles buttons, power, vibration and LEDs. The exact part is **TBD (Teardown Needed)**: PY32 / STM32G0-class.
+- **Robot UWB module (`uwb_robot.bin`):**
+  - Runs FiRa / custom ranging with PDoA (`PDoA ant space`, 4× delays/gains).
+  - Uses slotted sessions for up to 4 bound trackers (`slots_per_round`, `bind table full`, `release slot dev_id:%u rc:%04X`).
+  - Passes tracker data through to the X5 (`passthrough V1 no slot for dev_id`).
+  - Link test: send `0x7A` on `/dev/ttyS7` @ `115200` and expect `A2 01 00 00 2E 30` (`test_uwb_link.sh`).
+- **Pairing:** done between tracker and robot only. Hold the tracker power button ~5 s, then Beni's battery button ~5 s (`[PAIR-RC] Offer OK: ROBOT=0x%04X`). It works before app activation.
+- **X5 processing:**
+  - `md_uwb_loc` fuses raw UWB (`/data/uwb/data`: distance, azimuth, elevation, RSSI, antenna IQ, plus the tracker's accelerometer/gyro) with the camera IMU (`/data/camera/imu_data`) in a square-root fixed-lag factor graph (`lag_seconds = 0.12`).
+  - It publishes `/data/target/pose_gimbalframe` at 50 Hz. Calibration comes from `/private/uwb/cali_result.json`.
+  - Follow-me tracking (`eskf_debug_data.proto`) fuses this with YOLO detections, pose-based depth and re-ID recovery.
+- **App-visible topics:** `/status/uwb/rc_status_list` (battery, charging, RSSI, SN suffix), `/status/rc/joystick_raw`, `/cmd/rc/joystick_calib_req`, `/cmd/rc/vibration_{get,set}_*`. Related protos: `rc_joystick_uwb`, `key_event`, `uwb_pair_status`, `uwb_conn_event`.
 
 ---
 
@@ -65,4 +103,6 @@ Community hardware reference compiled from official firmware analysis (`V26.10.2
 - [ ] Main camera FPC connector pinout & PCB markings
 - [ ] Stereo camera (`SC035HGS`) lens thread & holder dimensions
 - [ ] X5 carrier board UART console / JTAG / SWD test-pad locations
-- [ ] Exact Wi-Fi / BLE / UWB chipset part numbers from PCB silkscreen
+- [ ] Exact Wi-Fi / BLE / UWB chipset part numbers from PCB silkscreen (UWB is MKSemi per firmware SDK paths; confirm exact part)
+- [ ] Motion Tracker helper MCU (`07x2`) part number and IMU part
+- [ ] Whether the SIM7600G-M11 LTE modem (`0x0800`) is internal or an external accessory
