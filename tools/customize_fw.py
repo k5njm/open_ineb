@@ -7,6 +7,7 @@
 #   "cryptography>=42.0.0",
 #   "passlib>=1.7.4",
 #   "requests>=2.31.0",
+#   "eclipse-zenoh>=1.0.0",
 # ]
 # ///
 """
@@ -502,45 +503,167 @@ def repack_firmware(cfg: CustomizationConfig) -> None:
         )
 
 
+def _detect_zip_version(zip_path: pathlib.Path) -> str:
+    try:
+        with zipfile.ZipFile(zip_path, "r") as zf:
+            for name in zf.namelist():
+                if name.endswith(".toml") or name == "config":
+                    text = zf.read(name).decode("utf-8", errors="replace")
+                    m = re.search(r"version\s*=\s*['\"]([^'\"]+)['\"]", text)
+                    if m:
+                        return m.group(1)
+    except Exception:
+        pass
+    return "26.10.28.04"
+
+
 def upload_local_ota(
     zip_path: pathlib.Path,
     robot_ip: str = "192.168.7.1",
-    port: int = 8080,
+    http_port: int = 8080,
+    ucp_port: int = 9007,
     upgrade_id: str | None = None,
     grant_token: str | None = None,
-    chunk_size: int = 4 * 1024 * 1024,
+    device_id: str = "",
+    zenoh_mode: str = "peer",
+    trigger_install: bool = True,
+    chunk_size: int = 2 * 1024 * 1024,
 ) -> None:
-    upgrade_id = upgrade_id or str(uuid.uuid4())
-    url = f"http://{robot_ip}:{port}/v2/upgrades/{upgrade_id}/upload"
+    tools_dir = pathlib.Path(__file__).resolve().parent
+    if str(tools_dir) not in sys.path:
+        sys.path.insert(0, str(tools_dir))
+    from ota_client import BeniOtaClient, STAGE_NAMES
+    from rich.progress import BarColumn, DownloadColumn, Progress, TransferSpeedColumn
+
     total_size = zip_path.stat().st_size
-    headers: dict[str, str] = {"Content-Type": "application/octet-stream"}
+    version = _detect_zip_version(zip_path)
+
     if grant_token:
-        headers["Authorization"] = f"Bearer {grant_token}"
-    console.print(f"[blue]Uploading {zip_path.name} ({total_size:,} bytes) to {url}...[/blue]")
-    offset = 0
-    with zip_path.open("rb") as f:
-        while offset < total_size:
-            chunk = f.read(chunk_size)
-            end = offset + len(chunk) - 1
-            req_headers = dict(headers)
-            req_headers["Content-Range"] = f"bytes {offset}-{end}/{total_size}"
-            resp = requests.post(url, data=chunk, headers=req_headers, timeout=120)
-            if resp.status_code >= 400:
-                console.print(f"[red]HTTP {resp.status_code} at offset {offset}:[/red] {resp.text}")
-                resp.raise_for_status()
-            offset += len(chunk)
-            pct = (offset / total_size) * 100
-            print(f"\rUploaded {offset:,}/{total_size:,} bytes ({pct:.1f}%)", end="", file=sys.stderr)
-    print("", file=sys.stderr)
-    console.print(
-        Panel.fit(
-            f"[bold green]Upload complete (upgrade_id={upgrade_id})[/bold green]\n"
-            f"Final response: {resp.text}\n"
-            "Next step: trigger installation by sending `/cmd/ota/upgrade_control_req` "
-            "over Zenoh-over-UCP (see tools/ota_proto.py and docs/ota_api.md).",
-            border_style="green",
+        # Manual token override: skip Zenoh START handshake and upload via TUS 1.0.0 directly
+        uid = upgrade_id or str(uuid.uuid4())
+        client = BeniOtaClient(robot_ip=robot_ip, ucp_port=ucp_port, http_port=http_port)
+        console.print(
+            f"[blue]Uploading {zip_path.name} ({total_size:,} bytes) via TUS 1.0.0 "
+            f"to http://{robot_ip}:{http_port}/v2/upgrades/{uid}/upload...[/blue]"
         )
+        with Progress(
+            "[progress.description]{task.description}",
+            BarColumn(),
+            DownloadColumn(),
+            TransferSpeedColumn(),
+            console=console,
+        ) as progress:
+            task_id = progress.add_task("Uploading", total=total_size)
+            client.upload_tus(
+                zip_path,
+                upgrade_id=uid,
+                upload_token=grant_token,
+                chunk_size=chunk_size,
+                on_progress=lambda done, _tot: progress.update(task_id, completed=done),
+            )
+        console.print(
+            Panel.fit(
+                f"[bold green]TUS 1.0.0 upload complete (upgrade_id={uid})[/bold green]",
+                border_style="green",
+            )
+        )
+        return
+
+    # Full standalone mode: UCP (:9007) -> Zenoh-over-UCP -> START -> TUS 1.0.0 -> INSTALL -> Progress
+    console.print(
+        f"[blue]Connecting standalone UCP+Zenoh client to {robot_ip}:{ucp_port} "
+        f"(mode={zenoh_mode})...[/blue]"
     )
+    with BeniOtaClient(
+        robot_ip=robot_ip,
+        ucp_port=ucp_port,
+        http_port=http_port,
+        zenoh_mode=zenoh_mode,
+    ) as client:
+        console.print("[green]UCP + Zenoh session established![/green]")
+        console.print(
+            f"[blue]Requesting upload grant via app/cmd/ota/upgrade_control_req "
+            f"(version={version}, size={total_size:,})...[/blue]"
+        )
+        prep, task_ctx = client.prepare_upgrade(
+            zip_path,
+            version=version,
+            device_id=device_id,
+            upgrade_id=upgrade_id,
+        )
+        console.print(
+            f"[green]Upload grant received:[/green] upgrade_id={prep.upgrade_id}, "
+            f"state={prep.state or 'CREATED'}, resume_offset={prep.offset}"
+        )
+
+        with Progress(
+            "[progress.description]{task.description}",
+            BarColumn(),
+            DownloadColumn(),
+            TransferSpeedColumn(),
+            console=console,
+        ) as progress:
+            task_id = progress.add_task("TUS Upload", total=total_size, completed=prep.offset)
+            client.upload_tus(
+                zip_path,
+                upgrade_id=prep.upgrade_id,
+                upload_token=prep.upload_grant_token,
+                start_offset=prep.offset,
+                chunk_size=chunk_size,
+                on_progress=lambda done, _tot: progress.update(task_id, completed=done),
+            )
+
+        if not trigger_install:
+            console.print(
+                Panel.fit(
+                    f"[bold green]Upload complete (install skipped via --no-install)[/bold green]\n"
+                    f"upgrade_id: {prep.upgrade_id}",
+                    border_style="green",
+                )
+            )
+            return
+
+        console.print("[blue]Triggering OTA install (OtaControlCmd.INSTALL)...[/blue]")
+        client.trigger_install(
+            upgrade_id=prep.upgrade_id,
+            upload_token=prep.upload_grant_token,
+            task_ctx=task_ctx,
+        )
+
+        console.print("[blue]Monitoring device/status/ota/upgrade_progress...[/blue]")
+        with Progress(
+            "[progress.description]{task.description}",
+            BarColumn(),
+            "[progress.percentage]{task.percentage:>3.0f}%",
+            console=console,
+        ) as progress:
+            ptask = progress.add_task("Installing", total=100)
+
+            def _on_prog(p: object) -> None:
+                data = getattr(p, "data", None)
+                if data is not None:
+                    stage = STAGE_NAMES.get(data.upgrade_stage, f"STAGE_{data.upgrade_stage}")
+                    progress.update(
+                        ptask,
+                        completed=min(100, data.progress_percent),
+                        description=f"OTA {stage}",
+                    )
+
+            final = client.monitor_progress(on_update=_on_prog, timeout=180.0)
+
+        if final and final.data and final.data.return_code != 0:
+            raise RuntimeError(
+                f"Robot reported OTA error: return_code={final.data.return_code}, "
+                f"stage={final.data.upgrade_stage}"
+            )
+        console.print(
+            Panel.fit(
+                f"[bold green]Standalone OTA upload & install complete![/bold green]\n"
+                f"upgrade_id: {prep.upgrade_id}\n"
+                "Beni will reboot into the updated mondo A/B slot.",
+                border_style="green",
+            )
+        )
 
 
 def main() -> int:
@@ -557,17 +680,27 @@ def main() -> int:
     parser.add_argument("--adb-pubkey-file", type=pathlib.Path, help="Optional adbkey.pub file")
     parser.add_argument("--upload", action="store_true", help="Upload built OTA ZIP to Beni over local Wi-Fi")
     parser.add_argument("--upload-only", type=pathlib.Path, help="Upload an existing OTA ZIP without rebuilding")
-    parser.add_argument("--upgrade-id", default=None, help="Upgrade UUID (from OtaUpgradeControlRsp)")
-    parser.add_argument("--grant-token", default=None, help="Bearer upload_grant_token (from OtaUpgradeControlRsp)")
+    parser.add_argument("--upgrade-id", default=None, help="Optional Upgrade UUID override")
+    parser.add_argument("--grant-token", default=None, help="Optional manual Upload-Token (skips Zenoh START)")
+    parser.add_argument("--device-id", default="", help="Optional robot serial/device_id")
     parser.add_argument("--robot-ip", default="192.168.7.1", help="Beni IP address (default: 192.168.7.1)")
+    parser.add_argument("--ucp-port", type=int, default=9007, help="Beni UCP UDP port (default: 9007)")
+    parser.add_argument("--http-port", type=int, default=8080, help="Beni OTA HTTP port (default: 8080)")
+    parser.add_argument("--zenoh-mode", choices=["peer", "client"], default="peer", help="Zenoh session mode (default: peer)")
+    parser.add_argument("--no-install", action="store_true", help="Upload ZIP without sending INSTALL command")
     args = parser.parse_args()
 
     if args.upload_only:
         upload_local_ota(
             args.upload_only.expanduser().resolve(),
             robot_ip=args.robot_ip,
+            http_port=args.http_port,
+            ucp_port=args.ucp_port,
             upgrade_id=args.upgrade_id,
             grant_token=args.grant_token,
+            device_id=args.device_id,
+            zenoh_mode=args.zenoh_mode,
+            trigger_install=not args.no_install,
         )
         return 0
 
@@ -594,7 +727,15 @@ def main() -> int:
 
     repack_firmware(cfg)
     if cfg.upload_ota:
-        upload_local_ota(cfg.output_zip, robot_ip=cfg.robot_ip)
+        upload_local_ota(
+            cfg.output_zip,
+            robot_ip=cfg.robot_ip,
+            http_port=args.http_port,
+            ucp_port=args.ucp_port,
+            device_id=args.device_id,
+            zenoh_mode=args.zenoh_mode,
+            trigger_install=not args.no_install,
+        )
     return 0
 
 

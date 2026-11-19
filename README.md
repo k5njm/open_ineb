@@ -16,15 +16,16 @@ Community reverse-engineering research and open-source companion tooling for the
 - [Firmware & Hardware Architecture](docs/firmware_architecture.md) — Complete dual-SoC (`X5` + `A3`) and multi-MCU firmware breakdown from `V26.10.28.04`.
 - [X5 Linux OS, Services, AI Models & Hardware Buses](docs/x5_os_and_services.md) — On-robot daemons, Iceoryx2/FastDDS + cross-chip bus, USB-C gadget/SSH/ADB config, RL locomotion policies, and UART/I2C bus map.
 - [Boot Verification Audit & Brick-Resistant Custom Firmware Guide](docs/safe_custom_firmware_guide.md) — `vbmeta.img`, `ota_process`, and `md_upgrade` audit plus step-by-step safe A/B `mondo.img` customization plan.
+- [UCP + Zenoh-over-UCP & Local OTA Protocol](docs/ucp_zenoh_protocol.md) — Complete byte-level specification of UCP over UDP (`:9007`), `mdZenohOverUcp` (`0xa4`–`0xa7`), Zenoh 1.x Protobuf OTA control, and TUS 1.0.0 resumable upload (`:8080`).
 - [Firmware OTA API Specification](docs/ota_api.md) — Cloud OTA API endpoints and JSON schemas recovered from `libapp.so`.
 - [Firmware OTA Archiver (`tools/fetch_ota.py`)](tools/fetch_ota.py) — Standalone `uv`-runnable CLI to log in with your own Mondo account, query firmware metadata, and archive a verified local backup copy of official firmware packages.
-- [Custom Firmware TUI Builder (`tools/customize_fw.py`)](tools/customize_fw.py) — Interactive TUI (`rich` + `questionary`) to build a brick-resistant, `mondo.img`-only A/B OTA package (optional root password, SSH authorized key, generated Beni Ed25519 host/client keys, USB-C ADB unlock, and local Wi-Fi OTA upload).
+- [Custom Firmware TUI Builder & Standalone OTA Uploader (`tools/customize_fw.py`)](tools/customize_fw.py) — Interactive TUI (`rich` + `questionary`) to build a brick-resistant, `mondo.img`-only A/B OTA package (optional root password, SSH authorized key, generated Beni Ed25519 host/client keys, USB-C ADB unlock) and upload/install it **100% standalone** over UCP + Zenoh + TUS 1.0.0 without the official Mondo app.
 
 ## Status
 
 - [x] Initial APK & transport stack identification (`LZ100`, Flutter AOT + `libmondo_native.so`)
-- [x] Zenoh `/cmd/*` and `/status/*` topic inventory
+- [x] Zenoh `/cmd/*` and `/status/*` topic inventory + all 434 `.proto` schemas extracted
 - [x] BLE UUIDs (`0000FFF0..FFF3`, `0100FFF0..FFF3`) & local HTTP endpoint inventory
-- [ ] Full Dart AOT (`libapp.so`) & native (`libmondo_native.so`) protocol schema recovery
-- [ ] Firmware package container inspection
-- [ ] Minimal open-source local controller PoC
+- [x] Full Dart AOT (`libapp.so`) & native (`libmondo_native.so`) protocol schema recovery
+- [x] Firmware package container & X5/A3 OS inspection (`V26.10.28.04`, `V26.11.19.01`, `sisyphus` debug)
+- [x] Standalone UCP + Zenoh-over-UCP + TUS 1.0.0 OTA controller (`tools/ucp_bridge.py`, `tools/ota_client.py`, verified via `uv run tests/test_standalone_ota.py`)
