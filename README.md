@@ -18,6 +18,7 @@ Community reverse-engineering research and open-source companion tooling for the
 - [Boot Verification Audit & Brick-Resistant Custom Firmware Guide](docs/safe_custom_firmware_guide.md) — `vbmeta.img`, `ota_process`, and `md_upgrade` audit plus step-by-step safe A/B `mondo.img` customization plan.
 - [Firmware OTA API Specification](docs/ota_api.md) — Cloud OTA API endpoints and JSON schemas recovered from `libapp.so`.
 - [Firmware OTA Archiver (`tools/fetch_ota.py`)](tools/fetch_ota.py) — Standalone `uv`-runnable CLI to log in with your own Mondo account, query firmware metadata, and archive a verified local backup copy of official firmware packages.
+- [Custom Firmware TUI Builder (`tools/customize_fw.py`)](tools/customize_fw.py) — Interactive TUI (`rich` + `questionary`) to build a brick-resistant, `mondo.img`-only A/B OTA package (optional root password, SSH authorized key, generated Beni Ed25519 host/client keys, USB-C ADB unlock, and local Wi-Fi OTA upload).
 
 ## Status
 
