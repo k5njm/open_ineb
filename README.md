@@ -10,9 +10,11 @@ Community reverse-engineering research and open-source companion tooling for the
 2. Build an open-source companion app / CLI controller for local control, telemetry, media download, and video streaming without cloud lock-in.
 3. Investigate firmware packaging, update verification, and hardware interfaces.
 
-## Documentation
+## Documentation & Tools
 
-- [System & Protocol Architecture](docs/architecture.md) — Current reverse-engineering findings covering BLE `ProtocolV0`, local HTTP endpoints (`192.168.7.1:8010` / `:8080`), UCP + Eclipse Zenoh (`zenoh-pico`), and OTA update architecture.
+- [System & Protocol Architecture](docs/architecture.md) — Reverse-engineering findings covering BLE `ProtocolV0`, local HTTP endpoints (`192.168.7.1:8010` / `:8080`), UCP + Eclipse Zenoh (`zenoh-pico`), and OTA update architecture.
+- [Firmware OTA API Specification](docs/ota_api.md) — Cloud OTA API endpoints and JSON schemas recovered from `libapp.so`.
+- [Firmware OTA Archiver (`tools/fetch_ota.py`)](tools/fetch_ota.py) — Standalone `uv`-runnable CLI to log in with your own Mondo account, query firmware metadata, and archive a verified local backup copy of official firmware packages.
 
 ## Status
 
