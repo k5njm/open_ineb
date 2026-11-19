@@ -83,9 +83,47 @@ class CustomizationConfig:
     ssh_port: int = 2222
     enable_adb: bool = True
     adb_pubkey: str | None = None
+    patch_files: list[pathlib.Path] | None = None
     upload_ota: bool = False
     robot_ip: str = "192.168.7.1"
     robot_ota_port: int = 8080
+
+
+def deep_merge_json_patch(
+    base: dict,
+    patch: dict,
+    prefix: str = "",
+) -> list[tuple[str, object, object]]:
+    """
+    Recursively merge `patch` into `base` in-place.
+    Returns a list of `(dotted_key, old_val, new_val)` diffs for reporting/verification.
+    """
+    diffs: list[tuple[str, object, object]] = []
+    for k, v in patch.items():
+        dotted = f"{prefix}.{k}" if prefix else k
+        if isinstance(v, dict) and isinstance(base.get(k), dict):
+            diffs.extend(deep_merge_json_patch(base[k], v, dotted))
+        else:
+            old = base.get(k, "<missing>")
+            base[k] = v
+            if old != v:
+                diffs.append((dotted, old, v))
+    return diffs
+
+
+def load_patch_targets(patch_files: list[pathlib.Path]) -> dict[str, list[tuple[str, dict]]]:
+    """Load declarative JSON patch files and group merges by `mondo_path`."""
+    by_target: dict[str, list[tuple[str, dict]]] = {}
+    for pf in patch_files:
+        doc = json.loads(pf.read_text(encoding="utf-8"))
+        pname = doc.get("name") or pf.stem
+        for tgt in doc.get("targets", []):
+            mpath = str(tgt["mondo_path"]).lstrip("/")
+            merge = tgt["merge"]
+            if not isinstance(merge, dict):
+                raise ValueError(f"Patch {pf} target {mpath} 'merge' must be a JSON object")
+            by_target.setdefault(mpath, []).append((pname, merge))
+    return by_target
 
 
 def sha256_file(path: pathlib.Path) -> str:
@@ -286,6 +324,31 @@ def run_tui(args: argparse.Namespace) -> CustomizationConfig:
         ).ask():
             adb_pubkey = default_adb_pub.read_text().strip()
 
+    # 4b. Optional safety / OA config patches (patches/*.json)
+    patch_files: list[pathlib.Path] = []
+    patches_dir = pathlib.Path(__file__).resolve().parent.parent / "patches"
+    if patches_dir.is_dir():
+        available = sorted(patches_dir.glob("*.json"))
+        if available:
+            choices = []
+            for pf in available:
+                try:
+                    meta = json.loads(pf.read_text(encoding="utf-8"))
+                    label = f"{meta.get('name', pf.stem)} — {meta.get('description', '')[:78]}"
+                except Exception:
+                    label = pf.name
+                choices.append(questionary.Choice(title=label, value=pf))
+            if questionary.confirm(
+                "Apply experimental safety / obstacle-avoidance JSON config patches to mondo.img?",
+                default=False,
+            ).ask():
+                selected = questionary.checkbox(
+                    "Select patches to apply (Space to toggle, Enter to confirm):",
+                    choices=choices,
+                ).ask()
+                if selected:
+                    patch_files = list(selected)
+
     # 5. Output paths
     default_out = pathlib.Path(args.output) if args.output else input_zip.with_name(f"open_ineb_{input_zip.name}")
     out_str = questionary.text("Output custom OTA ZIP path:", default=str(default_out)).ask()
@@ -311,6 +374,7 @@ def run_tui(args: argparse.Namespace) -> CustomizationConfig:
         ssh_port=ssh_port,
         enable_adb=enable_adb,
         adb_pubkey=adb_pubkey,
+        patch_files=patch_files or None,
         upload_ota=upload_ota,
         robot_ip=robot_ip,
     )
@@ -418,6 +482,37 @@ def repack_firmware(cfg: CustomizationConfig) -> None:
                     f"rm /etc/open_ineb/{fname}",
                     f"write /stage/{fname} /etc/open_ineb/{fname}",
                     f"set_inode_field /etc/open_ineb/{fname} mode {mode}",
+                ])
+
+        # 4a. Extract & apply any declarative JSON config patches to mondo.img files
+        if cfg.patch_files:
+            grouped = load_patch_targets(cfg.patch_files)
+            for idx, (mpath, merges) in enumerate(grouped.items()):
+                extracted = stage_dir / f"patched_{idx}.json"
+                ext_cmd = [
+                    "docker", "run", "--rm",
+                    "-v", f"{x5_dir}:/x5:ro",
+                    "alpine", "sh", "-c",
+                    f"apk add -q e2fsprogs e2fsprogs-extra >/dev/null && debugfs -R 'cat {mpath}' /x5/mondo.img 2>/dev/null",
+                ]
+                ext_res = subprocess.run(ext_cmd, capture_output=True, text=True)
+                if ext_res.returncode != 0 or not ext_res.stdout.strip():
+                    raise RuntimeError(f"Failed to extract /{mpath} from mondo.img for patching")
+                doc = json.loads(ext_res.stdout)
+                tbl = Table(title=f"Config Patch Diff: /md/{mpath}")
+                tbl.add_column("Patch")
+                tbl.add_column("Key")
+                tbl.add_column("Stock")
+                tbl.add_column("Patched")
+                for pname, merge_dict in merges:
+                    for key, old_v, new_v in deep_merge_json_patch(doc, merge_dict):
+                        tbl.add_row(pname, key, str(old_v), f"[green]{new_v}[/green]")
+                console.print(tbl)
+                extracted.write_text(json.dumps(doc, indent=2) + "\n", encoding="utf-8")
+                debugfs_cmds.extend([
+                    f"rm /{mpath}",
+                    f"write /stage/{extracted.name} /{mpath}",
+                    f"set_inode_field /{mpath} mode 0100644",
                 ])
 
         (stage_dir / "cmds.debugfs").write_text("\n".join(debugfs_cmds) + "\n", encoding="utf-8")
@@ -678,6 +773,19 @@ def main() -> int:
     parser.add_argument("--gen-client-key", action="store_true", help="Generate Beni Ed25519 client keypair")
     parser.add_argument("--enable-adb", action="store_true", help="Enable USB-C ADB (remove authorized_debug_profile)")
     parser.add_argument("--adb-pubkey-file", type=pathlib.Path, help="Optional adbkey.pub file")
+    parser.add_argument(
+        "--patch",
+        dest="patch_files",
+        action="append",
+        type=pathlib.Path,
+        default=[],
+        help="Declarative JSON config patch to apply to mondo.img (repeatable; see patches/)",
+    )
+    parser.add_argument(
+        "--safety-preset",
+        action="store_true",
+        help="Apply patches/safety_conservative_oa.json (experimental conservative OA & braking)",
+    )
     parser.add_argument("--upload", action="store_true", help="Upload built OTA ZIP to Beni over local Wi-Fi")
     parser.add_argument("--upload-only", type=pathlib.Path, help="Upload an existing OTA ZIP without rebuilding")
     parser.add_argument("--upgrade-id", default=None, help="Optional Upgrade UUID override")
@@ -708,6 +816,11 @@ def main() -> int:
         if not args.input or not args.output:
             parser.error("--non-interactive requires --input and --output")
         out_zip = pathlib.Path(args.output).expanduser().resolve()
+        resolved_patches = [p.expanduser().resolve() for p in args.patch_files]
+        if args.safety_preset:
+            preset = pathlib.Path(__file__).resolve().parent.parent / "patches" / "safety_conservative_oa.json"
+            if preset not in resolved_patches:
+                resolved_patches.insert(0, preset)
         cfg = CustomizationConfig(
             input_zip=pathlib.Path(args.input).expanduser().resolve(),
             output_zip=out_zip,
@@ -719,6 +832,7 @@ def main() -> int:
             ssh_port=args.ssh_port,
             enable_adb=args.enable_adb,
             adb_pubkey=args.adb_pubkey_file.expanduser().read_text().strip() if args.adb_pubkey_file else None,
+            patch_files=resolved_patches or None,
             upload_ota=args.upload,
             robot_ip=args.robot_ip,
         )

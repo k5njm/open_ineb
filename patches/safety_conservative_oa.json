@@ -1,0 +1,63 @@
+{
+  "name": "safety_conservative_oa",
+  "version": "1.0.0",
+  "experimental": true,
+  "description": "Strictly conservative obstacle avoidance & braking patch for Beni (Issue #1). Enables dormant action_guard velocity safety, widens forward clearance corridor from 6 cm to 24 cm (matching Beni's 20.7 cm URDF outer wheel width + margin), tightens stale-depth limits, increases stale-depth braking deceleration, and caps navigation max speed to 3.0 m/s to fit within the 2.0 m stereo depth horizon. Leaves jump_auto enabled.",
+  "targets": [
+    {
+      "mondo_path": "etc/md_function_v2/md_function_v2_config_p0.json",
+      "merge": {
+        "services": {
+          "fpv_moe_router": {
+            "gate": {
+              "depth_stale_ms": 120
+            }
+          },
+          "local_mapping": {
+            "query": {
+              "query_half_width_m": 0.12,
+              "max_snapshot_age_ms": 150
+            }
+          },
+          "navigation": {
+            "nav_diff": {
+              "processor": {
+                "nav_vx_scale": 3.0
+              }
+            },
+            "nav_omni": {
+              "processor": {
+                "nav_vx_scale": 3.0
+              }
+            }
+          },
+          "tracking": {
+            "fusion_depth_degrade": {
+              "hard_age_ms": 180,
+              "persist_ms": 400,
+              "decel_mps2": 2.5
+            },
+            "action_guard": {
+              "stationary_target": {
+                "enabled": true,
+                "max_decel_mps2": 2.5
+              },
+              "direction_preserving_velocity_safety": {
+                "enabled": true,
+                "force_stop_distance_m": 0.55,
+                "force_slow_speed_mps": 0.25,
+                "transition_velocity_mps": 0.35,
+                "release_hysteresis_m": 0.15
+              }
+            }
+          },
+          "edge_brake": {
+            "processor": {
+              "nav_vx_scale": 3.0
+            }
+          }
+        }
+      }
+    }
+  ]
+}

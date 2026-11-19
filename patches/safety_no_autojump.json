@@ -1,0 +1,18 @@
+{
+  "name": "safety_no_autojump",
+  "version": "1.0.0",
+  "experimental": true,
+  "description": "Optional companion patch that disables automatic obstacle jumping (`jump_auto.enabled = false`) so Beni prioritizes stopping/avoiding instead of attempting to jump over curbs or low obstacles.",
+  "targets": [
+    {
+      "mondo_path": "etc/md_function_v2/md_function_v2_config_p0.json",
+      "merge": {
+        "services": {
+          "jump_auto": {
+            "enabled": false
+          }
+        }
+      }
+    }
+  ]
+}
