@@ -74,13 +74,14 @@ class MondoClient:
 
     @staticmethod
     def encrypt_password(password: str, pem_public_key: str) -> str:
-        # MondoApp uses PointyCastle's OAEPEncoding(RSAEngine()), which defaults to OAEP + MGF1(SHA-1) + SHA-1
+        # Verified from RsaCrypto at 0x1488034 (`sub x0, x2, #0x42`, i.e., key_bytes - 66 = 2*32 + 2):
+        # RSA-OAEP with SHA-256 + MGF1(SHA-256).
         pub = serialization.load_pem_public_key(pem_public_key.encode("utf-8"))
         ct = pub.encrypt(
             password.encode("utf-8"),
             padding.OAEP(
-                mgf=padding.MGF1(algorithm=hashes.SHA1()),
-                algorithm=hashes.SHA1(),
+                mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                algorithm=hashes.SHA256(),
                 label=None,
             ),
         )
